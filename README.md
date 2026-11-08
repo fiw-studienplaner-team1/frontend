@@ -1,59 +1,44 @@
-# Frontend
+# Studienplaner – Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.2.6.
+Angular-Frontend für den Studienplaner (Team 1, FIW, HTW Berlin).
 
-## Development server
+## Voraussetzungen
 
-To start a local development server, run:
+- [Git](https://git-scm.com/downloads)
+- [Node.js](https://nodejs.org) **24.16.0** oder neuer (npm ist dabei)
 
-```bash
-ng serve
-```
+Prüfen mit `node -v`. Angular muss nicht separat installiert werden, das kommt über `npm install`.
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Setup
 
 ```bash
-ng generate component component-name
+git clone https://github.com/fiw-studienplaner-team1/frontend.git
+cd frontend
+npm install
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+`npm install` installiert alle Abhängigkeiten inkl. Angular in den Versionen aus der `package-lock.json`, also bei allen gleich.
+
+## Starten
 
 ```bash
-ng generate --help
+npm start
 ```
 
-## Building
+Die App läuft unter http://localhost:4200 und lädt bei Änderungen automatisch neu. Beenden mit `Strg + C`.
 
-To build the project run:
+## Hinweise
 
-```bash
-ng build
-```
+- Nach einem Pull, der die `package.json` ändert, erneut `npm install` ausführen.
+- `package-lock.json` immer mitcommitten, `node_modules` nie.
+- Angular-CLI-Befehle über `npx` ausführen (z. B. `npx ng generate component name`), damit die Projektversion genutzt wird.
+- Wer [nvm](https://github.com/nvm-sh/nvm) nutzt, kann mit `nvm use` die Version aus der `.nvmrc` aktivieren. Ohne nvm einfach ignorieren.
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## Befehle
 
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+| Befehl | Beschreibung |
+|---|---|
+| `npm start` | Entwicklungsserver starten |
+| `npx ng generate component name` | Komponente anlegen |
+| `npm run build` | Produktions-Build nach `dist/` |
+| `npm test` | Tests ausführen |
