@@ -8,9 +8,8 @@
 <ul>
     @for (m of module(); track m.id) {
     <li>
-        {{ m.name }} | {{ m.ects }} ECTS |
-        {{ m.sws ?? '?' }} SWS |
-        {{ m.art ? artLabel[m.art] : 'Art unbekannt' }} <!--TODO fragezeichen wieder rausnehmen sobald backend ergeanzt-->
+        {{ m.name }} | {{ m.ects }} ECTS | {{ m.sws }} SWS |
+        {{ artLabel[m.art] }} | {{ m.turnus }}
     </li>
     }
 </ul>

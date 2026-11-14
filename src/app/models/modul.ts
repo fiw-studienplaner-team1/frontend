@@ -5,6 +5,7 @@ export interface Modul {
   name: string;
   semester: number;
   ects: number;
-  sws?: number; //TODO fragezeichen wegnehmen sobald beides im backend erganzt ist
-  art?: ModulArt;
+  sws: number;
+  art: ModulArt;
+  turnus: string;
 }
