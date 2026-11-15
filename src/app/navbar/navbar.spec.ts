@@ -1,21 +1,22 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { Navbar } from './navbar';
 
 describe('Navbar', () => {
-  let component: Navbar;
   let fixture: ComponentFixture<Navbar>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
+  beforeEach(() => {
+    TestBed.configureTestingModule({
       imports: [Navbar],
-    }).compileComponents();
-
+      providers: [provideRouter([])],
+    });
     fixture = TestBed.createComponent(Navbar);
-    component = fixture.componentInstance;
-    await fixture.whenStable();
+    fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('enthält einen Link "Alle Module" auf /module', () => {
+    const link = (fixture.nativeElement as HTMLElement).querySelector('a')!;
+    expect(link.textContent).toContain('Alle Module');
+    expect(link.getAttribute('href')).toBe('/module');
   });
 });

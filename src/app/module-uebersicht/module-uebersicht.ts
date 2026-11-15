@@ -1,5 +1,5 @@
 import { Component, signal, OnInit, inject } from '@angular/core';
-import { Modul, ModulArt } from '../models/modul';
+import { Modul, ModulArt, ModulTurnus } from '../models/modul';
 import { ModulApi } from '../services/modul-api';
 
 @Component({
@@ -14,10 +14,15 @@ export class ModuleUebersicht implements OnInit {
   module = signal<Modul[]>([]);
 
   readonly artLabel: Record<ModulArt, string> = {
-    PFLICHT: 'Pflicht',
-    WAHLPFLICHT: 'Wahlpflicht',
-    AWE: 'AWE',
+    PFLICHT: 'Pflichtmodul',
+    WAHLPFLICHT: 'Wahlpflichtmodul'
   };
+
+  readonly turnusLabel: Record<ModulTurnus, string> = {
+  WISE: 'Wintersemester',
+  SOSE: 'Sommersemester',
+  SONST: 'Sonstiges',
+};
 
   ngOnInit() {
     this.api.getModule().subscribe({

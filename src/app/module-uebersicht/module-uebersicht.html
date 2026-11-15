@@ -9,7 +9,7 @@
     @for (m of module(); track m.id) {
     <li>
         {{ m.name }} | {{ m.ects }} ECTS | {{ m.sws }} SWS |
-        {{ artLabel[m.art] }} | {{ m.turnus }}
+        {{ m.art ? artLabel[m.art]: 'k. A.' }} | {{ m.turnus ? turnusLabel[m.turnus] : 'k. A.' }}
     </li>
     }
 </ul>

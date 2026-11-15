@@ -1,4 +1,5 @@
-export type ModulArt = 'PFLICHT' | 'WAHLPFLICHT' | 'AWE';
+export type ModulArt = 'PFLICHT' | 'WAHLPFLICHT';
+export type ModulTurnus = 'WISE' | 'SOSE' | 'SONST';
 
 export interface Modul {
   id: string; //TODO klaeren ob wir string z.b. B23 oder number als id haben wollen 
@@ -6,6 +7,6 @@ export interface Modul {
   semester: number;
   ects: number;
   sws: number;
-  art: ModulArt;
-  turnus: string;
+  art: ModulArt | null;
+  turnus: ModulTurnus | null;
 }
