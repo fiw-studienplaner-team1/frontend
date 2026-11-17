@@ -1,0 +1,16 @@
+<h1>Alle Module</h1>
+
+@if (status() === 'laden') {
+<p>Module werden geladen …</p>
+} @else if (status() === 'fehler') {
+<p>Die Module konnten nicht geladen werden. Bitte versuche es später erneut.</p>
+} @else {
+<ul>
+    @for (m of module(); track m.id) {
+    <li>
+        {{ m.name }} | {{ m.ects }} ECTS | {{ m.sws }} SWS |
+        {{ m.art ? artLabel[m.art]: 'k. A.' }} | {{ m.turnus ? turnusLabel[m.turnus] : 'k. A.' }}
+    </li>
+    }
+</ul>
+}
