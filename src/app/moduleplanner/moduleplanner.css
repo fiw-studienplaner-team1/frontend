@@ -1,0 +1,27 @@
+.moduleplanner-container {
+    padding: 3rem;
+}
+
+mat-card {
+    border-radius: 1rem;
+}
+
+.moduleplanner-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1.5rem;
+}
+
+mat-card-title {
+    font-size: 1.25rem;
+}
+
+.semester-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.suchfeld {
+    width: 100%;
+}
