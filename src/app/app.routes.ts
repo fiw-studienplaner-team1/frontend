@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { ModuleUebersicht } from './module-uebersicht/module-uebersicht';
 import { Moduleplanner } from './moduleplanner/moduleplanner';
-import { ModuleDetail } from './features/module/module-detail/module-detail';
+import { ModuleDetail } from './module-detail/module-detail';
 
 export const routes: Routes = [
   { path: 'module', component: ModuleUebersicht },
