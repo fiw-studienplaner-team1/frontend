@@ -1,10 +1,11 @@
 import { Component, signal, OnInit, inject } from '@angular/core';
 import { Modul, ModulArt, ModulTurnus } from '../models/modul';
 import { ModulApi } from '../services/modul-api';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-module-uebersicht',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './module-uebersicht.html',
 })
 export class ModuleUebersicht implements OnInit {
