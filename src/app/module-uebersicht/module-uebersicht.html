@@ -1,13 +1,13 @@
 <h1>Alle Module</h1>
 
-@if (status() === 'laden') {
+@if (status() === 'loading') {
 <p>Module werden geladen …</p>
-} @else if (status() === 'fehler') {
+} @else if (status() === 'error') {
 <p>Die Module konnten nicht geladen werden. Bitte versuche es später erneut.</p>
 } @else {
 <ul>
     @for (m of module(); track m.id) {
-    <li>
+    <li [routerLink]="['/module', m.id]">
         {{ m.name }} | {{ m.ects }} ECTS | {{ m.sws }} SWS |
         {{ m.art ? artLabel[m.art]: 'k. A.' }} | {{ m.turnus ? turnusLabel[m.turnus] : 'k. A.' }}
     </li>
