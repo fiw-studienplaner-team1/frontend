@@ -1,8 +1,8 @@
 <h1>Alle Module</h1>
 
-@if (status() === 'laden') {
+@if (status() === 'loading') {
 <p>Module werden geladen …</p>
-} @else if (status() === 'fehler') {
+} @else if (status() === 'error') {
 <p>Die Module konnten nicht geladen werden. Bitte versuche es später erneut.</p>
 } @else {
 <ul>

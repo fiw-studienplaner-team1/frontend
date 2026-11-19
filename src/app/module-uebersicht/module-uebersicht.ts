@@ -1,5 +1,5 @@
 import { Component, signal, OnInit, inject } from '@angular/core';
-import { Modul, ModulArt, ModulTurnus } from '../models/modul';
+import { Modul, MODUL_ART_LABEL, MODUL_TURNUS_LABEL } from '../models/modul';
 import { ModulApi } from '../services/modul-api';
 import { RouterLink } from '@angular/router';
 
@@ -11,19 +11,12 @@ import { RouterLink } from '@angular/router';
 export class ModuleUebersicht implements OnInit {
   private api = inject(ModulApi); 
 
-  status = signal<'laden' | 'fehler' | 'ok'>('laden');
+  status = signal<'loading' | 'error' | 'ok'>('loading');
   module = signal<Modul[]>([]);
 
-  readonly artLabel: Record<ModulArt, string> = {
-    PFLICHT: 'Pflichtmodul',
-    WAHLPFLICHT: 'Wahlpflichtmodul'
-  };
+  readonly artLabel = MODUL_ART_LABEL;
+  readonly turnusLabel = MODUL_TURNUS_LABEL;
 
-  readonly turnusLabel: Record<ModulTurnus, string> = {
-  WISE: 'Wintersemester',
-  SOSE: 'Sommersemester',
-  SONST: 'Sonstiges',
-};
 
   ngOnInit() {
     this.api.getModule().subscribe({
@@ -31,7 +24,7 @@ export class ModuleUebersicht implements OnInit {
         this.module.set(daten);
         this.status.set('ok');
       },
-      error: () => this.status.set('fehler'),
+      error: () => this.status.set('error'),
     });
   }
 }

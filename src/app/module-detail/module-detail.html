@@ -1,10 +1,10 @@
 <h1>Moduldetailansicht</h1>
 
-@if (status() === 'laden') {
+@if (status() === 'loading') {
 <p>Modul wird geladen …</p>
-} @else if (status() === 'fehler') {
+} @else if (status() === 'error') {
 <p>Das Modul konnte nicht geladen werden. Bitte versuche es später erneut.</p>
-} @else if (status() === 'nicht-gefunden') {
+} @else if (status() === 'not-found') {
 <p>Das Modul konnte nicht gefunden werden.</p>
 } @else {
   @if (modul(); as m) {

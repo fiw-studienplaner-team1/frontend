@@ -2,8 +2,9 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { JsonPipe } from '@angular/common';
 import { ModulApi } from '../services/modul-api';
-import { Modul, ModulArt, ModulTurnus } from '../models/modul';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Modul, MODUL_ART_LABEL, MODUL_TURNUS_LABEL } from '../models/modul';
+
 
 @Component({
   selector: 'app-module-detail',
@@ -14,33 +15,25 @@ export class ModuleDetail implements OnInit {
   private route = inject(ActivatedRoute);
   private modulApi = inject(ModulApi);
 
-  status = signal<'laden' | 'fehler' | 'nicht-gefunden' | 'ok'>('laden');
+  status = signal<'loading' | 'error' | 'not-found' | 'ok'>('loading');
   modul = signal<Modul | null>(null);
 
-  readonly artLabel: Record<ModulArt, string> = {
-    PFLICHT: 'Pflichtmodul',
-    WAHLPFLICHT: 'Wahlpflichtmodul'
-  };
-
-  readonly turnusLabel: Record<ModulTurnus, string> = {
-    WISE: 'Wintersemester',
-    SOSE: 'Sommersemester',
-    SONST: 'Sonstiges',
-  };
+  readonly artLabel = MODUL_ART_LABEL;
+  readonly turnusLabel = MODUL_TURNUS_LABEL;
 
   ngOnInit(): void {
     const id = String(this.route.snapshot.paramMap.get('id'));
 
     this.modulApi.getModuleById(id).subscribe({
-      next: (modul) => {
-        this.modul.set(modul);
+      next: (loadedModule) => {
+        this.modul.set(loadedModule);
         this.status.set('ok');
       },
       error: (err: HttpErrorResponse) => {
         if (err.status === 404) {
-          this.status.set('nicht-gefunden');
+          this.status.set('not-found');
         } else {
-          this.status.set('fehler');
+          this.status.set('error');
         }
       },
     });
