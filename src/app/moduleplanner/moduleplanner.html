@@ -8,6 +8,12 @@
     <div class="moduleplanner-grid">
 
         <div class="semester-range">
+            @if (status() === 'laden') {
+                <p>Semesterpläne werden geladen...</p>
+            } @else if (status() === 'fehler') {
+                <p>Die Semesterpläne konnten nicht geladen werden. Bitte versuche es später erneut.</p>
+            } @else {
+                @for (plan of semesterplan(); track plan.planId) {
             <mat-card appearance="outlined">
                 <div class="semester-card-header">
                     <div>
@@ -26,6 +32,10 @@
                     <!-- Hier kommen später die Module rein-->
                 </mat-card-content>
             </mat-card>
+                } @empty {
+                    <p>Noch keine Semesterpläne angelegt.</p>
+                }
+            }  
         </div>
 
             <div class="module-list-range">
