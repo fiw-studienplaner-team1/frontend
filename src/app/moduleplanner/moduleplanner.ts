@@ -26,15 +26,33 @@ semesterplan = signal<Semesterplan[]>([]);
 status = signal<string>('laden');
 catalogStatus = signal<string>('laden');
 
+search = signal<string>('');
 
+// Berechnet automatisch eine duplikatfreie Menge (Set) aller Modul-IDs,
+// die bereits in irgendeinem Semesterplan eingeplant sind
+plannedModuleIds = computed(() => new Set(this.semesterplan().flatMap(plan => plan.modules.map(m => m.moduleId))));
+
+// Modulkatalog nach Kuerzel oder Name gefiltert
+filteredModules = computed(() => {
+const query = this.search().toLowerCase().trim();
+return this.modules().filter(m =>
+m.id.toLowerCase().includes(query) || m.name.toLowerCase().includes(query));
+});
+
+turnusLabel(turnus: Modul['turnus']): string {
+if (turnus === 'WISE') return 'WiSe';
+if (turnus === 'SOSE') return 'SoSe';
+return 'kein fester Turnus';
+
+}
 
 getTotalEcts(plan:Semesterplan): number {
   return plan.modules.reduce((sum, module) => sum + module.ects, 0);
 }
 
-// Berechnet automatisch eine duplikatfreie Menge (Set) aller Modul-IDs,
-// die bereits in irgendeinem Semesterplan eingeplant sind
-plannedModuleIds = computed(() => new Set(this.semesterplan().flatMap(plan => plan.modules.map(m => m.moduleId))));
+onSearch(event: Event): void {
+  this.search.set((event.target as HTMLInputElement).value)
+}
 
 // Prueft, ob ein bestimmtes Modul bereits eingeplant ist (true/false),
 // z. B. um im Modulkatalog das Badge "Eingeplant" anzuzeigen

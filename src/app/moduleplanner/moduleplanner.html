@@ -58,14 +58,16 @@
 
                     <mat-card-content>
                         <mat-form-field appearance="outline" class="suchfeld">
-                            <input matInput type="text" placeholder="Modul suchen...">
+                            <mat-label>Modul suchen</mat-label>
+                            <input matInput type="text" (input)="onSearch($event)">
                         </mat-form-field>
 
                         <mat-list>
-                        @for (module of modules(); track module.id) {
+                        @for (module of filtererdModules(); track module.id) {
                         <mat-list-item>
-                            <span matListItemTitle> {{ module.name }}</span>
+                            <span matListItemTitle> {{ module.name }}</span> <!-- TODO: für Modulkürzel(B23) {{ module.id}} noch einfügen -->
                             <span matListItemLine>
+                                {{ module.ects }} ECTS · {{ turnusLabel(module.turnus) }}
                                 @if (isPlanned(module.id)) {
                                     <span class="planned-label">eingeplant</span>
                                 }
@@ -81,6 +83,8 @@
                             <button mat-menu-item (click)="addModule(module, plan)">
                             {{ plan.semesterLabel }}
                             </button>
+                        } @empty {
+                            <p class="hint">Keine Module gefunden.</p>
                         }
                     </mat-menu>
                         </mat-list-item>
