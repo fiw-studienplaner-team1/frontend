@@ -22,10 +22,16 @@
                             <mat-card-subtitle>Aktuelles Studienjahr</mat-card-subtitle>
                         </mat-card-header>
                     </div>
-                
-                    <mat-card-actions>
-                        <button mat-stroked-button>+ Modul hinzufügen</button>
-                    </mat-card-actions>
+
+                    <div>
+                        <span>
+                            {{ getTotalEcts(plan) }}/30 ECTS                                  
+                        </span>
+                        <mat-card-actions>
+                            <button mat-stroked-button>+ Modul hinzufügen</button>
+                        </mat-card-actions>
+                    </div>
+                    
                 </div>
 
                 <mat-card-content>

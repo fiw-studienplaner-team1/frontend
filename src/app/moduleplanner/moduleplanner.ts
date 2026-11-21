@@ -19,6 +19,10 @@ private api = inject(SemesterplanApi);
 semesterplan = signal<Semesterplan[]>([]);
 status = signal<string>('laden');
 
+getTotalEcts(plan:Semesterplan): number {
+  return plan.modules.reduce((sum, module) => sum + module.ects, 0);
+}
+
   ngOnInit(): void {
     this.api.getSemesterplan().subscribe ({
       next: (data) => {

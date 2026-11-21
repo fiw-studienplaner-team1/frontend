@@ -7,6 +7,13 @@ export interface EnrolledModule {
     sws: number;
 }
 
+export interface Enrollment {
+    enrollmentId: number;
+    planId: number;
+    offeringId: number;
+    moduleId: string;
+    moduleName: string;
+}
 
 export interface Semesterplan {
     planId: number;
