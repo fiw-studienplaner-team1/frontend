@@ -45,7 +45,11 @@
         </div>
 
             <div class="module-list-range">
-
+                @if (catalogStatus() === 'laden') {
+                <p>Das Modulkatalog wird geladen...</p>
+            } @else if (catalogStatus() === 'fehler') {
+                <p>Das Modulkatalog konnte nicht geladen werden. Bitte versuche es später erneut.</p>
+            } @else {
                 <mat-card appearance="outlined">
                     <mat-card-header>
                         <mat-card-subtitle> Modulkatalog</mat-card-subtitle>
@@ -56,6 +60,33 @@
                         <mat-form-field appearance="outline" class="suchfeld">
                             <input matInput type="text" placeholder="Modul suchen...">
                         </mat-form-field>
+
+                        <mat-list>
+                        @for (module of modules(); track module.id) {
+                        <mat-list-item>
+                            <span matListItemTitle> {{ module.name }}</span>
+                            <span matListItemLine>
+                                @if (isPlanned(module.id)) {
+                                    <span class="planned-label">eingeplant</span>
+                                }
+                            </span>
+
+                            <button mat-button matListItemMeta
+                                [matMenuTriggerFor]="semesterMenu"
+                                [disabled]="semesterplan().length === 0">
+                                Einplanen
+                            </button>
+                    <mat-menu #semesterMenu="matMenu">
+                        @for (plan of semesterplan(); track plan.planId) {
+                            <button mat-menu-item (click)="addModule(module, plan)">
+                            {{ plan.semesterLabel }}
+                            </button>
+                        }
+                    </mat-menu>
+                        </mat-list-item>
+
+                        }
+                        </mat-list>
                     </mat-card-content>
                 </mat-card>
 
