@@ -10,8 +10,8 @@
   @if (modul(); as m) {
   <h2>{{m.id}} | {{ m.name }}</h2>
   <p>
-    {{ m.ects }} ECTS | {{ m.sws }} SWS |
-    {{ m.art ? artLabel[m.art] : 'k. A.' }} | {{ m.turnus ? turnusLabel[m.turnus] : 'k. A.' }}
+    {{ m.ects }} ECTS | {{ m.weeklyHours }} SWS |
+    {{ m.moduleType ? typeLabel[m.moduleType] : 'k. A.' }} | {{ m.cycle ? cycleLabel[m.cycle] : 'k. A.' }}
   </p>
   }
 }

@@ -1,5 +1,5 @@
 import { Component, signal, OnInit, inject } from '@angular/core';
-import { Modul, MODUL_ART_LABEL, MODUL_TURNUS_LABEL } from '../models/modul';
+import { Module, MODULE_TYPE_LABEL, CYCLE_LABEL, MODULE_FORM_LABEL } from '../models/module';
 import { ModulApi } from '../services/modul-api';
 import { RouterLink } from '@angular/router';
 
@@ -12,11 +12,11 @@ export class ModuleUebersicht implements OnInit {
   private api = inject(ModulApi); 
 
   status = signal<'loading' | 'error' | 'ok'>('loading');
-  module = signal<Modul[]>([]);
+  module = signal<Module[]>([]);
 
-  readonly artLabel = MODUL_ART_LABEL;
-  readonly turnusLabel = MODUL_TURNUS_LABEL;
-
+  readonly typeLabel = MODULE_TYPE_LABEL;
+  readonly cycleLabel = CYCLE_LABEL;
+  readonly formLabel = MODULE_FORM_LABEL;
 
   ngOnInit() {
     this.api.getModule().subscribe({

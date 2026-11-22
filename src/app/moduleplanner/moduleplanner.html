@@ -13,7 +13,7 @@
             } @else if (status() === 'fehler') {
                 <p>Die Semesterpläne konnten nicht geladen werden. Bitte versuche es später erneut.</p>
             } @else {
-                @for (plan of semesterplan(); track plan.planId) {
+                @for (plan of semesterplan(); track plan.id) {
             <mat-card appearance="outlined"
                 cdkDropList
                 [cdkDropListData]="plan"
@@ -21,7 +21,7 @@
                 <div class="semester-card-header">
                     <div>
                         <mat-card-header>
-                            <mat-card-title> {{ plan.semesterlabel }}</mat-card-title>
+                            <mat-card-title> {{ plan.semesterLabel }}</mat-card-title>
                             <mat-card-subtitle>Aktuelles Studienjahr · {{plan.modules.length}} Module eingeplant</mat-card-subtitle>
                         </mat-card-header>
                     </div>
@@ -43,10 +43,10 @@
                         </p>
                     } @else {
                         <mat-list>
-                            @for (module of plan.modules; track module.enrollmentId) {
+                            @for (module of plan.modules; track module.id) {
                             <mat-list-item>
-                                <span matListItemTitle>{{ module.moduleId }} {{ module.name }}</span>
-                                <span matListItemLine>{{ module.ects }} ECTS · {{ module.sws }} SWS</span>
+                                <span matListItemTitle>{{ module.moduleId }} {{ module.moduleName }}</span>
+                                <span matListItemLine>{{ module.ects }} ECTS · {{ module.weeklyHours }} SWS</span>
                             </mat-list-item>
                             }
                         </mat-list>
@@ -82,7 +82,7 @@
                         <mat-list-item cdkDrag [cdkDragData]="module">
                             <span matListItemTitle> {{ module.name }}</span> <!-- TODO: für Modulkürzel(B23) {{ module.id}} noch einfügen -->
                             <span matListItemLine>
-                                {{ module.ects }} ECTS · {{ turnusLabel(module.turnus) }}
+                                {{ module.ects }} ECTS · {{ cycleLabel(module.cycle) }}
                                 @if (isPlanned(module.id)) {
                                     <span class="planned-label">eingeplant</span>
                                 }
@@ -94,7 +94,7 @@
                                 Einplanen
                             </button>
                     <mat-menu #semesterMenu="matMenu">
-                        @for (plan of semesterplan(); track plan.planId) {
+                        @for (plan of semesterplan(); track plan.id) {
                             <button mat-menu-item (click)="addModule(module, plan)">
                             {{ plan.semesterLabel }}
                             </button>
@@ -107,7 +107,7 @@
                         </mat-list>
                     </mat-card-content>
                 </mat-card>
-
+                    }
 
                 
             </div>

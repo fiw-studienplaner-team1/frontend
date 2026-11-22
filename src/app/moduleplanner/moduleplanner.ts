@@ -7,7 +7,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatMenuModule} from '@angular/material/menu';
 import { SemesterplanApi } from '../services/semesterplan-api';
 import { Semesterplan } from '../models/semesterplan';
-import { Modul } from '../models/modul';
+import { Module } from '../models/module';
 import {CdkDrag, CdkDragDrop, CdkDropList, CdkDropListGroup} from '@angular/cdk/drag-drop';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -25,7 +25,7 @@ export class Moduleplanner implements OnInit{
 private api = inject(SemesterplanApi);
 private snackBar = inject(MatSnackBar);
 
-modules = signal<Modul[]>([]);
+modules = signal<Module[]>([]);
 semesterplan = signal<Semesterplan[]>([]);
 
 status = signal<string>('laden');
@@ -41,14 +41,13 @@ plannedModuleIds = computed(() => new Set(this.semesterplan().flatMap(plan => pl
 filteredModules = computed(() => {
 const query = this.search().toLowerCase().trim();
 return this.modules().filter(m =>
-m.id.toLowerCase().includes(query) || m.name.toLowerCase().includes(query));
+m.moduleNumber.toLowerCase().includes(query) || m.name.toLowerCase().includes(query));
 });
 
-turnusLabel(turnus: Modul['turnus']): string {
-if (turnus === 'WISE') return 'WiSe';
-if (turnus === 'SOSE') return 'SoSe';
-return 'kein fester Turnus';
-
+cycleLabel(cycle: Module['cycle']): string {
+  if (cycle === 'WISE') return 'WiSe';
+  if (cycle === 'SOSE') return 'SoSe';
+  return 'kein fester Turnus';
 }
 
 getTotalEcts(plan:Semesterplan): number {
@@ -61,11 +60,11 @@ onSearch(event: Event): void {
 
 // Prueft, ob ein bestimmtes Modul bereits eingeplant ist (true/false),
 // z. B. um im Modulkatalog das Badge "Eingeplant" anzuzeigen
-isPlanned(moduleId: string): boolean {
+isPlanned(moduleId: number): boolean {
   return this.plannedModuleIds().has(moduleId);
 }
 
-drop(event: CdkDragDrop<Semesterplan, unknown, Modul>, plan: Semesterplan): void {
+drop(event: CdkDragDrop<Semesterplan, unknown, Module>, plan: Semesterplan): void {
   if (event.previousContainer === event.container) return;
 
   const module = event.item.data;
@@ -74,8 +73,8 @@ drop(event: CdkDragDrop<Semesterplan, unknown, Modul>, plan: Semesterplan): void
   this.addModule(module, plan);
 }
 
-addModule(module: Modul, plan: Semesterplan): void {
-  this.api.addEnrollModule(plan.planId, module.id).subscribe ({
+addModule(module: Module, plan: Semesterplan): void {
+  this.api.addEnrollModule(plan.id, module.id).subscribe ({
     next: () => {
       this.snackBar.open(`${module.id} wurde in ${plan.semesterLabel} eingeplant.`, 'OK', {
         duration: 3000,
