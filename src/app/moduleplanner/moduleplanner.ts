@@ -8,17 +8,22 @@ import {MatMenuModule} from '@angular/material/menu';
 import { SemesterplanApi } from '../services/semesterplan-api';
 import { Semesterplan } from '../models/semesterplan';
 import { Modul } from '../models/modul';
+import {CdkDrag, CdkDragDrop, CdkDropList, CdkDropListGroup} from '@angular/cdk/drag-drop';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { HttpErrorResponse } from '@angular/common/http';
 
 
 
 @Component({
-  imports: [MatCardModule, MatButtonModule, MatListModule, MatInputModule, MatFormFieldModule],
+  imports: [MatCardModule, MatButtonModule, MatListModule, MatInputModule, MatFormFieldModule, MatMenuModule, 
+    CdkDrag, CdkDropList, CdkDropListGroup],
   selector: 'app-modulplaner',
   styleUrl: './moduleplanner.css',
   templateUrl: './moduleplanner.html',
 })
 export class Moduleplanner implements OnInit{
 private api = inject(SemesterplanApi);
+private snackBar = inject(MatSnackBar);
 
 modules = signal<Modul[]>([]);
 semesterplan = signal<Semesterplan[]>([]);
@@ -60,13 +65,30 @@ isPlanned(moduleId: string): boolean {
   return this.plannedModuleIds().has(moduleId);
 }
 
+drop(event: CdkDragDrop<Semesterplan, unknown, Modul>, plan: Semesterplan): void {
+  if (event.previousContainer === event.container) return;
+
+  const module = event.item.data;
+  if(!module) return;
+
+  this.addModule(module, plan);
+}
+
 addModule(module: Modul, plan: Semesterplan): void {
   this.api.addEnrollModule(plan.planId, module.id).subscribe ({
     next: () => {
+      this.snackBar.open(`${module.id} wurde in ${plan.semesterLabel} eingeplant.`, 'OK', {
+        duration: 3000,
+      });
       this.loadPlans();
     },
-    error: () => this.status.set('fehler')
+    error: (err: HttpErrorResponse) => this.showError(err, 'Modul konnte nicht eingeplant werden.'),
   });
+}
+
+private showError(err: HttpErrorResponse, fallback: string): void {
+  const message = err.error?.message ?? fallback;
+  this.snackBar.open(message, 'Schließen', { duration: 5000 });
 }
 
 loadModules(): void {
