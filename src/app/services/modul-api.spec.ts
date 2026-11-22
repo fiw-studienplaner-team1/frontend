@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ModulApi } from './modul-api';
-import { Modul } from '../models/modul';
+import { Module } from '../models/module';
 
 describe('ModulApi', () => {
   let api: ModulApi;
@@ -19,10 +19,10 @@ describe('ModulApi', () => {
   afterEach(() => httpMock.verify());
 
   it('ruft GET /modules auf und liefert die Module', () => {
-    const testDaten: Modul[] = [
-      { id: 'B11', name: 'Programmierung 1', semester: 1, ects: 6, sws: 6, art: 'PFLICHT', turnus: 'WISE' },
+    const testDaten: Module[] = [
+      { id: 1, name: 'Programmierung 1', moduleNumber: 'B11', recommendedSemester: 1, ects: 6, weeklyHours: 6, moduleForm: 'SL', moduleType: 'PFLICHT', cycle: 'WISE' },
     ];
-    let ergebnis: Modul[] = [];
+    let ergebnis: Module[] = [];
 
     api.getModule().subscribe((m) => (ergebnis = m));
 

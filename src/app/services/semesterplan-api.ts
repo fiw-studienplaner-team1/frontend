@@ -2,7 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable, Inject, inject } from "@angular/core";
 import { Observable } from "rxjs";
 import { Semesterplan } from "../models/semesterplan";
-import { Modul } from "../models/modul";
+import { Module } from "../models/module";
 import { Enrollment } from "../models/semesterplan";
 
 
@@ -16,11 +16,11 @@ export class SemesterplanApi {
         return this.http.get<Semesterplan[]>(`${this.baseUrl}/semesterplans`);
     }
 
-    getModules(): Observable<Modul[]> {
-        return this.http.get<Modul[]>(`${this.baseUrl}/modules`);
+    getModules(): Observable<Module[]> {
+        return this.http.get<Module[]>(`${this.baseUrl}/modules`);
     }
 
-    addEnrollModule(planId: number, moduleId: string): Observable<Enrollment> {
+    addEnrollModule(planId: number, moduleId: number): Observable<Enrollment> {
         return this.http.post<Enrollment>(`${this.baseUrl}/semesterplans/${planId}/enrollments`, { moduleId });
     }
 }

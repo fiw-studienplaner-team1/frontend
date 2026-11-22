@@ -1,23 +1,18 @@
 
-export interface EnrolledModule {
-    enrollmentId: number;
-    moduleId: string;
-    name: string;
-    ects: number;
-    sws: number;
-}
 
 export interface Enrollment {
-    enrollmentId: number;
-    planId: number;
-    offeringId: number;
-    moduleId: string;
-    moduleName: string;
+    id: number;
+    semesterPlanId: number; 
+    moduleOfferingId: number; 
+    moduleId: number; 
+    moduleName: string; 
+    ects: number;
+    weeklyHours: number;
 }
 
 export interface Semesterplan {
-    planId: number;
+    id: number;
     semesterId: number;
     semesterLabel: string;
-    modules: EnrolledModule[];
+    modules: Enrollment[];
 }

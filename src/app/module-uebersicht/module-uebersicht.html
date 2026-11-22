@@ -8,8 +8,8 @@
 <ul>
     @for (m of module(); track m.id) {
     <li>
-        {{ m.name }} | {{ m.ects }} ECTS | {{ m.sws }} SWS |
-        {{ m.art ? artLabel[m.art]: 'k. A.' }} | {{ m.turnus ? turnusLabel[m.turnus] : 'k. A.' }}
+        {{ m.name }} | {{ m.ects }} ECTS | {{ m.weeklyHours }} SWS | {{ m.moduleForm ? formLabel[m.moduleForm]: 'k.A' }} |
+        {{ m.moduleType ? typeLabel[m.moduleType]: 'k. A.' }} | {{ m.cycle ? cycleLabel[m.cycle] : 'k. A.' }}
     </li>
     }
 </ul>
