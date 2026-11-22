@@ -3,6 +3,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ModuleUebersicht } from './module-uebersicht';
 import { Modul } from '../models/modul';
+import { provideRouter } from '@angular/router';
 
 const URL = 'http://localhost:8080/modules';
 
@@ -21,7 +22,7 @@ describe('ModuleUebersicht', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [ModuleUebersicht],
-      providers: [provideHttpClient(), provideHttpClientTesting()],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
     });
     fixture = TestBed.createComponent(ModuleUebersicht);
     httpMock = TestBed.inject(HttpTestingController);

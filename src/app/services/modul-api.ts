@@ -11,4 +11,8 @@ export class ModulApi {
   getModule(): Observable<Modul[]> {
     return this.http.get<Modul[]>(this.url);
   }
+
+  getModuleById(id: string): Observable<Modul> {
+  return this.http.get<Modul>(`${this.url}/${id}`);
+}
 }

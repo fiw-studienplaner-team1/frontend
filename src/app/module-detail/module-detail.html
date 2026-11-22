@@ -1,0 +1,17 @@
+<h1>Moduldetailansicht</h1>
+
+@if (status() === 'loading') {
+<p>Modul wird geladen …</p>
+} @else if (status() === 'error') {
+<p>Das Modul konnte nicht geladen werden. Bitte versuche es später erneut.</p>
+} @else if (status() === 'not-found') {
+<p>Das Modul konnte nicht gefunden werden.</p>
+} @else {
+  @if (modul(); as m) {
+  <h2>{{m.id}} | {{ m.name }}</h2>
+  <p>
+    {{ m.ects }} ECTS | {{ m.sws }} SWS |
+    {{ m.art ? artLabel[m.art] : 'k. A.' }} | {{ m.turnus ? turnusLabel[m.turnus] : 'k. A.' }}
+  </p>
+  }
+}
