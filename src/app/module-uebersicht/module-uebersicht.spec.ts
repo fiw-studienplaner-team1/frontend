@@ -1,9 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideRouter } from '@angular/router';
 import { ModuleUebersicht } from './module-uebersicht';
 import { Module } from '../models/module';
-import { provideRouter } from '@angular/router';
 
 const URL = 'http://localhost:8080/modules';
 
