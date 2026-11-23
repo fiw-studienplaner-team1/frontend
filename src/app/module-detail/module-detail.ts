@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { JsonPipe } from '@angular/common';
 import { ModulApi } from '../services/modul-api';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Modul, MODUL_ART_LABEL, MODUL_TURNUS_LABEL } from '../models/modul';
+import { Module, MODULE_TYPE_LABEL, CYCLE_LABEL } from '../models/module';
 
 
 @Component({
@@ -16,10 +16,10 @@ export class ModuleDetail implements OnInit {
   private modulApi = inject(ModulApi);
 
   status = signal<'loading' | 'error' | 'not-found' | 'ok'>('loading');
-  modul = signal<Modul | null>(null);
+  modul = signal<Module | null>(null);
 
-  readonly artLabel = MODUL_ART_LABEL;
-  readonly turnusLabel = MODUL_TURNUS_LABEL;
+  readonly typeLabel = MODULE_TYPE_LABEL;
+  readonly cycleLabel = CYCLE_LABEL;
 
   ngOnInit(): void {
     const id = String(this.route.snapshot.paramMap.get('id'));

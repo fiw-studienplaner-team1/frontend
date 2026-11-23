@@ -3,19 +3,21 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { ModuleDetail } from './module-detail';
-import { Modul } from '../models/modul';
+import { Module } from '../models/module';
 
-// URL, die getModuleById fuer die ID 'B11' aufruft – mit modul-api abgleichen
-const URL = 'http://localhost:8080/modules/B11';
+// URL, die getModuleById für die ID '1' aufruft – mit modul-api abgleichen
+const URL = 'http://localhost:8080/modules/1';
 
-const testModul: Modul = {
-  id: 'B11',
+const testModul: Module = {
+  id: 1,
   name: 'Programmierung 1',
-  semester: 1,
+  moduleNumber: 'B11',
+  recommendedSemester: 1,
   ects: 6,
-  sws: 6,
-  art: 'PFLICHT',
-  turnus: 'WISE',
+  weeklyHours: 6,
+  moduleType: 'PFLICHT',
+  cycle: 'WISE',
+  moduleForm: 'SL',
 };
 
 describe('ModuleDetail', () => {
@@ -30,21 +32,21 @@ describe('ModuleDetail', () => {
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
-        // simuliert die URL /module/B11
+        // simuliert die URL /module/1
         {
           provide: ActivatedRoute,
-          useValue: { snapshot: { paramMap: convertToParamMap({ id: 'B11' }) } },
+          useValue: { snapshot: { paramMap: convertToParamMap({ id: '1' }) } },
         },
       ],
     });
     fixture = TestBed.createComponent(ModuleDetail);
     httpMock = TestBed.inject(HttpTestingController);
-    fixture.detectChanges(); // loest ngOnInit und die Anfrage aus
+    fixture.detectChanges();
   });
 
   afterEach(() => httpMock.verify());
 
-  it('zeigt waehrend des Ladens einen Ladehinweis', () => {
+  it('zeigt während des Ladens einen Ladehinweis', () => {
     expect(text()).toContain('Modul wird geladen');
     httpMock.expectOne(URL);
   });
@@ -66,8 +68,8 @@ describe('ModuleDetail', () => {
     expect(text()).not.toContain('Modul wird geladen');
   });
 
-  it('zeigt Fallbacks, wenn art und turnus null sind', () => {
-    httpMock.expectOne(URL).flush({ ...testModul, art: null, turnus: null });
+  it('zeigt Fallbacks, wenn moduleType und cycle null sind', () => {
+    httpMock.expectOne(URL).flush({ ...testModul, moduleType: null, cycle: null });
     fixture.detectChanges();
 
     const anzahlFallbacks = text().split('k. A.').length - 1;
@@ -92,7 +94,6 @@ describe('ModuleDetail', () => {
   });
 
   it('zeigt eine Fehlermeldung, wenn das Backend nicht erreichbar ist', () => {
-    // Netzwerkfehler ohne Antwort, Statuscode 0
     httpMock.expectOne(URL).error(new ProgressEvent('error'));
     fixture.detectChanges();
 

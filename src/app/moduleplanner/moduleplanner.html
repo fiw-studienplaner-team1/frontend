@@ -1,4 +1,4 @@
-<div class="moduleplanner-container">
+<div class="moduleplanner-container" cdkDropListGroup>
     <div class="moduleplanner-header">
         <h4>Studienverlauf</h4>
         <h2>Mein Modulplan</h2>
@@ -8,28 +8,63 @@
     <div class="moduleplanner-grid">
 
         <div class="semester-range">
-            <mat-card appearance="outlined">
+            @if (status() === 'laden') {
+                <p>Semesterpläne werden geladen...</p>
+            } @else if (status() === 'fehler') {
+                <p>Die Semesterpläne konnten nicht geladen werden. Bitte versuche es später erneut.</p>
+            } @else {
+                @for (plan of semesterplan(); track plan.id) {
+            <mat-card appearance="outlined"
+                cdkDropList
+                [cdkDropListData]="plan"
+                (cdkDropListDropped)="drop($event, plan)">
                 <div class="semester-card-header">
                     <div>
                         <mat-card-header>
-                            <mat-card-title> Semester Titel</mat-card-title>
-                            <mat-card-subtitle>Aktuelles Studienjahr</mat-card-subtitle>
+                            <mat-card-title> {{ plan.semesterLabel }}</mat-card-title>
+                            <mat-card-subtitle>Aktuelles Studienjahr · {{plan.modules.length}} Module eingeplant</mat-card-subtitle>
                         </mat-card-header>
                     </div>
-                
-                    <mat-card-actions>
-                        <button mat-stroked-button>+ Modul hinzufügen</button>
-                    </mat-card-actions>
+
+                    <div>
+                        <span>
+                            {{ getTotalEcts(plan) }}/30 ECTS                                  
+                        </span>
+                        <mat-card-actions>
+                            <button mat-stroked-button>+ Modul hinzufügen</button>
+                        </mat-card-actions>
+                    </div>                   
                 </div>
 
                 <mat-card-content>
-                    <!-- Hier kommen später die Module rein-->
+                    @if (plan.modules.length === 0) {
+                        <p class="hint drop-hint">Ziehe ein Modul hierher oder nutze „Einplanen“ in der
+                        Modulliste.
+                        </p>
+                    } @else {
+                        <mat-list>
+                            @for (module of plan.modules; track module.id) {
+                            <mat-list-item>
+                                <span matListItemTitle>{{ module.moduleId }} {{ module.moduleName }}</span>
+                                <span matListItemLine>{{ module.ects }} ECTS · {{ module.weeklyHours }} SWS</span>
+                            </mat-list-item>
+                            }
+                        </mat-list>
+                        }
                 </mat-card-content>
             </mat-card>
+                } @empty {
+                    <p>Noch keine Semesterpläne angelegt.</p>
+                }
+            }  
         </div>
 
             <div class="module-list-range">
-
+                @if (catalogStatus() === 'laden') {
+                <p>Das Modulkatalog wird geladen...</p>
+            } @else if (catalogStatus() === 'fehler') {
+                <p>Das Modulkatalog konnte nicht geladen werden. Bitte versuche es später erneut.</p>
+            } @else {
                 <mat-card appearance="outlined">
                     <mat-card-header>
                         <mat-card-subtitle> Modulkatalog</mat-card-subtitle>
@@ -38,11 +73,41 @@
 
                     <mat-card-content>
                         <mat-form-field appearance="outline" class="suchfeld">
-                            <input matInput type="text" placeholder="Modul suchen...">
+                            <mat-label>Modul suchen</mat-label>
+                            <input matInput type="text" (input)="onSearch($event)">
                         </mat-form-field>
+
+                        <mat-list cdkDropList [cdkDropListSortingDisabled]="true">
+                        @for (module of filteredModules(); track module.id) {
+                        <mat-list-item cdkDrag [cdkDragData]="module">
+                            <span matListItemTitle> {{ module.name }}</span> <!-- TODO: für Modulkürzel(B23) {{ module.id}} noch einfügen -->
+                            <span matListItemLine>
+                                {{ module.ects }} ECTS · {{ cycleLabel(module.cycle) }}
+                                @if (isPlanned(module.id)) {
+                                    <span class="planned-label">eingeplant</span>
+                                }
+                            </span>
+
+                            <button mat-button matListItemMeta
+                                [matMenuTriggerFor]="semesterMenu"
+                                [disabled]="semesterplan().length === 0">
+                                Einplanen
+                            </button>
+                    <mat-menu #semesterMenu="matMenu">
+                        @for (plan of semesterplan(); track plan.id) {
+                            <button mat-menu-item (click)="addModule(module, plan)">
+                            {{ plan.semesterLabel }}
+                            </button>
+                        } 
+                    </mat-menu>
+                        </mat-list-item>
+                        } @empty {
+                            <p class="hint">Keine Module gefunden.</p>
+                        }
+                        </mat-list>
                     </mat-card-content>
                 </mat-card>
-
+                    }
 
                 
             </div>

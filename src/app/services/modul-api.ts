@@ -1,18 +1,18 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Modul } from '../models/modul';
+import { Module } from '../models/module';
 
 @Injectable({ providedIn: 'root' })
 export class ModulApi {
   private http = inject(HttpClient);
   private url = 'http://localhost:8080/modules';
 
-  getModule(): Observable<Modul[]> {
-    return this.http.get<Modul[]>(this.url);
+  getModule(): Observable<Module[]> {
+    return this.http.get<Module[]>(this.url);
   }
 
-  getModuleById(id: string): Observable<Modul> {
-  return this.http.get<Modul>(`${this.url}/${id}`);
+  getModuleById(id: string): Observable<Module> {
+  return this.http.get<Module>(`${this.url}/${id}`);
 }
 }
