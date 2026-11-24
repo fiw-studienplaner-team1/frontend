@@ -22,7 +22,7 @@ export class ModuleDetail implements OnInit {
   readonly cycleLabel = CYCLE_LABEL;
 
   ngOnInit(): void {
-    const id = String(this.route.snapshot.paramMap.get('id'));
+    const id = Number(this.route.snapshot.paramMap.get('id'));
 
     this.modulApi.getModuleById(id).subscribe({
       next: (loadedModule) => {

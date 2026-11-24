@@ -12,7 +12,7 @@ export class ModulApi {
     return this.http.get<Module[]>(this.url);
   }
 
-  getModuleById(id: string): Observable<Module> {
+  getModuleById(id: number): Observable<Module> {
   return this.http.get<Module>(`${this.url}/${id}`);
 }
 }
