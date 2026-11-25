@@ -5,3 +5,9 @@ export interface Prerequisite {
   mode: PrerequisiteMode;
 }
 
+export interface PrerequisiteNode {
+  modulPrerequisiteId: number;
+  mode: PrerequisiteMode;
+  children: PrerequisiteNode[];
+}
+
