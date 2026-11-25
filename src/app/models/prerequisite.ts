@@ -11,3 +11,14 @@ export interface PrerequisiteNode {
   children: PrerequisiteNode[];
 }
 
+export interface ModuleWithPrerequisites {
+  moduleId: number;
+  predecessors: Prerequisite[];
+  successors: Prerequisite[]
+}
+
+export interface PrerequisiteEdge {
+  predecessorId: number;
+  successorId: number;
+  mode: PrerequisiteMode;
+}

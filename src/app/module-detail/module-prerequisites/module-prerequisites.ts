@@ -1,29 +1,26 @@
 import { Component, inject, input, OnInit, signal } from '@angular/core';
 import { ModulePrerequisitesApi } from '../../services/module-prerequisites-api';
-import { Prerequisite } from '../../models/prerequisite';
+import { PrerequisiteEdge } from '../../models/prerequisite';
+import { JsonPipe } from '@angular/common';
 
 @Component({
   selector: 'app-module-prerequisites',
   styleUrl: './module-prerequisites.css',
   templateUrl: './module-prerequisites.html',
+  imports: [JsonPipe],
 })
 export class ModulePrerequisites implements OnInit {
   private prerequisitesApi = inject(ModulePrerequisitesApi);
 
-  moduleNumber = input.required<string>();
-  predecessors = signal<Prerequisite[]>([]);
-  successors = signal<Prerequisite[]>([]);
+  moduleId = input.required<number>();
+  predecessorEdges = signal<PrerequisiteEdge[]>([]);
+  successorEdges = signal<PrerequisiteEdge[]>([]);
 
   ngOnInit(): void {
-    this.prerequisitesApi.getPredecessorsByModuleNumber(this.moduleNumber()).subscribe({
-      next: (loadedPredecessors) => {
-        this.predecessors.set(loadedPredecessors);
-      },
-    });
-
-    this.prerequisitesApi.getSuccessorsByModuleNumber(this.moduleNumber()).subscribe({
-      next: (loadedSuccessors) => {
-        this.successors.set(loadedSuccessors);
+    this.prerequisitesApi.getAllPrerequisitesOfAllModules().subscribe({
+      next: (allModules) => {
+        this.predecessorEdges.set(this.prerequisitesApi.getPredecessorEdges(allModules, this.moduleId()));
+        this.successorEdges.set(this.prerequisitesApi.getSuccessorEdges(allModules, this.moduleId()));
       },
     });
   }

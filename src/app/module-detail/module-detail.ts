@@ -4,12 +4,14 @@ import { JsonPipe } from '@angular/common';
 import { ModulApi } from '../services/modul-api';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Module, MODULE_TYPE_LABEL, CYCLE_LABEL } from '../models/module';
+import { ModulePrerequisites } from './module-prerequisites/module-prerequisites';
 
 
 @Component({
   selector: 'app-module-detail',
   templateUrl: './module-detail.html',
-  styleUrl: './module-detail.css'
+  styleUrl: './module-detail.css',
+  imports: [ModulePrerequisites]
 })
 export class ModuleDetail implements OnInit {
   private route = inject(ActivatedRoute);
