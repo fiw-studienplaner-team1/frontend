@@ -1,0 +1,151 @@
+/* Wird die Card zu schmal, wird horizontal gescrollt statt weiter geschrumpft */
+.graph-scroll {
+  overflow-x: auto;
+}
+
+/* Das SVG passt sich der Breite der Card an (Größen aus layout() im TS) */
+.graph {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0 auto;
+}
+
+/* Kanten */
+.edge {
+  fill: none;
+  transition: opacity 0.15s;
+}
+
+.edge.necessary {
+  stroke: #b8401c;
+  stroke-width: 2.2;
+}
+
+.edge.recommended {
+  stroke: #8a94a6;
+  stroke-width: 1.2;
+  stroke-dasharray: 4 3;
+}
+
+.edge.dimmed {
+  opacity: 0.1;
+}
+
+/* Knoten */
+.node {
+  cursor: pointer;
+  outline: none;
+  transition: opacity 0.15s;
+}
+
+.node.dimmed {
+  opacity: 0.3;
+}
+
+.node rect {
+  fill: #ffffff;
+  stroke: #b4bccb;
+  stroke-width: 1;
+}
+
+.node:hover rect,
+.node:focus-visible rect,
+.node.selected rect {
+  stroke: #1f3a5f;
+  stroke-width: 2;
+}
+
+.node .number {
+  font-size: 12px;
+  font-weight: 600;
+  fill: #1f3a5f;
+}
+
+.node .name {
+  font-size: 10.5px;
+  fill: #4a5568;
+}
+
+/* Das Modul, auf dessen Seite man gerade ist */
+.node.current rect {
+  fill: #1f3a5f;
+  stroke: #1f3a5f;
+}
+
+.node.current.selected rect {
+  stroke: #b8401c;
+}
+
+.node.current .number,
+.node.current .name {
+  fill: #ffffff;
+}
+
+/* Handy: nur die Nummer im Kasten, dafür etwas größer */
+.graph.compact .number {
+  font-size: 13px;
+}
+
+/* Handy: Name des angetippten Moduls */
+.selection {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.25rem 1rem;
+  margin-top: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  background: #eef1f6;
+}
+
+.selection-name {
+  font-weight: 500;
+  color: #1f3a5f;
+}
+
+.selection-link {
+  border: none;
+  background: none;
+  padding: 0;
+  font: inherit;
+  color: #1f3a5f;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.selection-hint {
+  margin: 0.75rem 0 0;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+/* Legende */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+  color: #4a5568;
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.line {
+  display: inline-block;
+  width: 28px;
+}
+
+.line.necessary {
+  border-top: 2px solid #b8401c;
+}
+
+.line.recommended {
+  border-top: 2px dashed #8a94a6;
+}

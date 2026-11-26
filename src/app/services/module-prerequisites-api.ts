@@ -20,7 +20,7 @@ export class ModulePrerequisitesApi {
     return this.http.get<Prerequisite[]>(`${this.url}/successor/${moduleNumber}`);
   }
 
-    // TODO: Mock ersetzen durch return this.http.get<ModuleWithPrerequisites[]>(`${this.url}/prerequisites`);, sobald es den Endpunkt gibt
+  // TODO: Mock ersetzen durch return this.http.get<ModuleWithPrerequisites[]>(`${this.url}/prerequisites`);, sobald es den Endpunkt gibt
   getAllPrerequisitesOfAllModules(): Observable<ModuleWithPrerequisites[]> {
     const allModules: ModuleWithPrerequisites[] = [];
 

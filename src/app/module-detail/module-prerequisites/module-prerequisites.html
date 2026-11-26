@@ -1,5 +1,94 @@
-<h3>Vorgänger</h3>
-<pre>{{ predecessorEdges() | json }}</pre>
+@if (isLoading()) {
+  <p>Voraussetzungen werden geladen …</p>
+} @else if (hasEdges()) {
+  <div class="graph-scroll">
+    <svg
+      class="graph"
+      [class.compact]="isMobile()"
+      [attr.viewBox]="'0 0 ' + layout().width + ' ' + layout().height"
+      [style.max-width.px]="layout().maxDisplayWidth"
+      [style.min-width.px]="layout().minDisplayWidth"
+      role="img"
+      aria-label="Voraussetzungskette des Moduls"
+    >
+      <defs>
+        <marker id="arrow-necessary" viewBox="0 0 10 10" refX="9" refY="5"
+                markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M1 1 L9 5 L1 9" fill="none" stroke="#b8401c" stroke-width="2" stroke-linecap="round" />
+        </marker>
+        <marker id="arrow-recommended" viewBox="0 0 10 10" refX="9" refY="5"
+                markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M1 1 L9 5 L1 9" fill="none" stroke="#8a94a6" stroke-width="1.5" stroke-linecap="round" />
+        </marker>
+      </defs>
 
-<h3>Nachfolger</h3>
-<pre>{{ successorEdges() | json }}</pre>
+      <!-- Kanten zuerst, damit die Kästen darüber liegen -->
+      @for (edge of layout().edges; track edge.key) {
+        <path
+          class="edge"
+          [class.necessary]="edge.mode === 'NECESSARY'"
+          [class.recommended]="edge.mode === 'RECOMMENDED'"
+          [class.dimmed]="!isEdgeActive(edge)"
+          [attr.d]="edge.path"
+          [attr.marker-end]="edge.mode === 'NECESSARY' ? 'url(#arrow-necessary)' : 'url(#arrow-recommended)'"
+        />
+      }
+
+      @for (node of layout().nodes; track node.id) {
+        <g
+          class="node"
+          [class.current]="node.isCurrent"
+          [class.selected]="node.id === selectedId()"
+          [class.dimmed]="isNodeDimmed(node.id)"
+          tabindex="0"
+          role="button"
+          [attr.aria-label]="node.fullLabel"
+          (click)="onNodeClick(node.id)"
+          (keydown.enter)="onNodeClick(node.id)"
+          (mouseenter)="hoveredId.set(node.id)"
+          (mouseleave)="hoveredId.set(null)"
+          (focus)="hoveredId.set(node.id)"
+          (blur)="hoveredId.set(null)"
+        >
+          <title>{{ node.fullLabel }}</title>
+          <rect [attr.x]="node.x" [attr.y]="node.y" [attr.width]="layout().nodeWidth" [attr.height]="layout().nodeHeight" rx="6" />
+          <!-- TODO: auf dem Handy Kürzel statt Modulnummer, sobald es im Modell ist (siehe buildLayout) -->
+          <text class="number" [attr.x]="node.centerX" [attr.y]="node.labelY" text-anchor="middle">
+            {{ node.label }}
+          </text>
+          @for (line of node.nameLines; track $index) {
+            <text
+              class="name"
+              [attr.x]="node.centerX"
+              [attr.y]="line.y"
+              text-anchor="middle"
+              [attr.textLength]="line.textLength"
+              [attr.lengthAdjust]="line.textLength ? 'spacingAndGlyphs' : null"
+            >{{ line.text }}</text>
+          }
+        </g>
+      }
+    </svg>
+  </div>
+
+  <!-- Handy: Name des angetippten Moduls, weil im Kasten nur die Nummer steht -->
+  @if (isMobile()) {
+    @if (selectedId(); as id) {
+      <div class="selection">
+        <span class="selection-name">{{ getModuleLabel(id) }}</span>
+        @if (!isCurrentModule(id)) {
+          <button type="button" class="selection-link" (click)="openModule(id)">Zum Modul →</button>
+        }
+      </div>
+    } @else {
+      <p class="selection-hint">Tippe auf ein Modul, um seinen Namen zu sehen.</p>
+    }
+  }
+
+  <div class="legend">
+    <span class="legend-item"><span class="line necessary"></span>notwendig</span>
+    <span class="legend-item"><span class="line recommended"></span>empfohlen</span>
+  </div>
+} @else {
+  <p>Dieses Modul hat keine Vorgänger oder Nachfolger.</p>
+}

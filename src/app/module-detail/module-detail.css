@@ -1,0 +1,106 @@
+/*
+  Mobile first: Regeln ohne Media Query gelten fürs Handy.
+  Ab 600px (Tablet) und 900px (Desktop) wird ergänzt.
+*/
+
+.module-detail-container {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+mat-card {
+  border-radius: 1rem;
+}
+
+mat-card-title {
+  font-size: 1.25rem;
+}
+
+/* Kopf: Modulnummer über dem Namen */
+.module-detail-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.module-detail-header h1 {
+  margin: 0;
+}
+
+/* Kennzahlen: 2×2 Kacheln */
+.module-detail-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.fact mat-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.fact-label {
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+
+.fact-value {
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+/*
+  Inhalt: eine Spalte.
+  minmax(0, 1fr) statt 1fr: Sonst kann die Spalte nicht schmaler werden
+  als ihr breitester Inhalt (z.B. die Grafik), und die ganze Seite wird zu breit.
+*/
+.module-detail-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+}
+
+.module-detail-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 0;
+}
+
+/* Tablet */
+@media (min-width: 600px) {
+  .module-detail-container {
+    padding: 2rem;
+    gap: 1.5rem;
+  }
+
+  .module-detail-header {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+
+  .module-detail-facts {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+/* Desktop: Inhalt links breit, Organisation rechts schmal */
+@media (min-width: 900px) {
+  .module-detail-container {
+    padding: 3rem;
+  }
+
+  .module-detail-grid {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    gap: 1.5rem;
+  }
+
+  .module-detail-column {
+    gap: 1.5rem;
+  }
+}

@@ -1,17 +1,91 @@
-<h1>Moduldetailansicht</h1>
-
 @if (status() === 'loading') {
-<p>Modul wird geladen …</p>
+  <p>Modul wird geladen …</p>
 } @else if (status() === 'error') {
-<p>Das Modul konnte nicht geladen werden. Bitte versuche es später erneut.</p>
+  <p>Das Modul konnte nicht geladen werden. Bitte versuche es später erneut.</p>
 } @else if (status() === 'not-found') {
-<p>Das Modul konnte nicht gefunden werden.</p>
+  <p>Das Modul konnte nicht gefunden werden.</p>
 } @else {
   @if (modul(); as m) {
-  <h2>{{m.id}} | {{ m.name }}</h2>
-  <p>
-    {{ m.ects }} ECTS | {{ m.weeklyHours }} SWS |
-    {{ m.moduleType ? typeLabel[m.moduleType] : 'k. A.' }} | {{ m.cycle ? cycleLabel[m.cycle] : 'k. A.' }}
-  </p>
-<app-module-prerequisites [moduleId]="m.id" />  }
+    <div class="module-detail-container">
+
+      <header class="module-detail-header">
+        <span class="module-detail-number">{{ m.moduleNumber }}</span>
+        <h1>{{ m.name }}</h1>
+        <!-- TODO: Button "Im Modulplaner einplanen" -->
+      </header>
+
+      <!-- Kennzahlen: vier kleine Kacheln, auf dem Handy 2×2, ab 600px in einer Reihe -->
+      <div class="module-detail-facts">
+        <mat-card class="fact">
+          <mat-card-content>
+            <span class="fact-label">ECTS-Punkte</span>
+            <span class="fact-value">{{ m.ects }}</span>
+          </mat-card-content>
+        </mat-card>
+        <mat-card class="fact">
+          <mat-card-content>
+            <span class="fact-label">Wochenstunden</span>
+            <span class="fact-value">{{ m.weeklyHours }} SWS</span>
+          </mat-card-content>
+        </mat-card>
+        <mat-card class="fact">
+          <mat-card-content>
+            <span class="fact-label">Modulart</span>
+            <span class="fact-value">{{ m.moduleType ? typeLabel[m.moduleType] : 'k. A.' }}</span>
+          </mat-card-content>
+        </mat-card>
+        <mat-card class="fact">
+          <mat-card-content>
+            <span class="fact-label">Angeboten</span>
+            <span class="fact-value">{{ m.cycle ? cycleLabel[m.cycle] : 'k. A.' }}</span>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <div class="module-detail-grid">
+        <div class="module-detail-column">
+          <mat-card>
+            <mat-card-header>
+              <mat-card-subtitle>Modulinhalte</mat-card-subtitle>
+              <mat-card-title>Was du in diesem Modul lernst</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <!-- Inhalte und Lernziele: fehlen noch im Modell -->
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card>
+            <mat-card-header>
+              <mat-card-subtitle>Voraussetzungen</mat-card-subtitle>
+              <mat-card-title>Die Abhängigkeiten des Moduls</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <app-module-prerequisites [moduleId]="m.id" />
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <div class="module-detail-column">
+          <mat-card>
+            <mat-card-header>
+              <mat-card-subtitle>Organisation</mat-card-subtitle>
+              <mat-card-title>Details</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <!-- TODO: variableninhalte ergaenzen -->
+              <h3>Modulverantwortliche</h3>
+              <h3>Prüfungsform</h3>
+              <h3>Empfohlen ab Semester </h3>
+              <p>{{ m.recommendedSemester }}</p>
+              <h3>Modulform</h3>
+              <p>{{ m.moduleForm }}</p>
+              <h3>Modulnummer</h3>
+              <p>{{ m.moduleNumber }}</p>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+
+    </div>
+  }
 }

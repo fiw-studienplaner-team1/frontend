@@ -5,13 +5,14 @@ import { ModulApi } from '../services/modul-api';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Module, MODULE_TYPE_LABEL, CYCLE_LABEL } from '../models/module';
 import { ModulePrerequisites } from './module-prerequisites/module-prerequisites';
+import { MatCard, MatCardHeader, MatCardTitle, MatCardContent, MatCardSubtitle } from '@angular/material/card';
 
 
 @Component({
   selector: 'app-module-detail',
   templateUrl: './module-detail.html',
   styleUrl: './module-detail.css',
-  imports: [ModulePrerequisites]
+  imports: [ModulePrerequisites, MatCard, MatCardHeader, MatCardTitle, MatCardContent, MatCardSubtitle]
 })
 export class ModuleDetail implements OnInit {
   private route = inject(ActivatedRoute);
@@ -24,20 +25,26 @@ export class ModuleDetail implements OnInit {
   readonly cycleLabel = CYCLE_LABEL;
 
   ngOnInit(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
+  // feuert beim ersten Laden UND jedes Mal, wenn sich die id in der URL ändert
+  this.route.paramMap.subscribe((params) => {
+    this.loadModule(Number(params.get('id')));
+  });
+}
 
-    this.modulApi.getModuleById(id).subscribe({
-      next: (loadedModule) => {
-        this.modul.set(loadedModule);
-        this.status.set('ok');
-      },
-      error: (err: HttpErrorResponse) => {
-        if (err.status === 404) {
-          this.status.set('not-found');
-        } else {
-          this.status.set('error');
-        }
-      },
-    });
-  }
+private loadModule(id: number): void {
+  this.status.set('loading');
+  this.modulApi.getModuleById(id).subscribe({
+    next: (loadedModule) => {
+      this.modul.set(loadedModule);
+      this.status.set('ok');
+    },
+    error: (err: HttpErrorResponse) => {
+      if (err.status === 404) {
+        this.status.set('not-found');
+      } else {
+        this.status.set('error');
+      }
+    },
+  });
+}
 }
