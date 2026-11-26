@@ -8,21 +8,18 @@ import { ModulApi } from '../../services/modul-api';
 import { ModuleWithPrerequisites, PrerequisiteEdge } from '../../models/prerequisite';
 import { Module } from '../../models/module';
 
-// Unter dieser Breite gilt die Handy-Variante (passt zum 600px-Breakpoint im CSS)
 const MOBILE_QUERY = '(max-width: 599.98px)';
 
-// Maße der Grafik. Alle Werte in SVG-Einheiten; die Zeichenfläche (viewWidth)
-// wird auf die Breite der Card skaliert, höchstens bis maxDisplayWidth.
 interface LayoutConfig {
   viewWidth: number;
   maxDisplayWidth: number;
-  minDisplayWidth: number; // darunter wird gescrollt statt weiter geschrumpft
-  maxNodeWidth: number; // Kästen werden so breit wie möglich, aber höchstens so breit
+  minDisplayWidth: number;
+  maxNodeWidth: number;
   nodeHeight: number;
-  nodeGap: number; // Abstand zwischen Kästen in einer Zeile
-  rowStep: number; // Abstand Zeilenanfang zu Zeilenanfang (Platz für die Kurven)
+  nodeGap: number;
+  rowStep: number;
   padding: number;
-  showNames: boolean; // Modulname im Kasten oder nur die Nummer
+  showNames: boolean;
 }
 
 const DESKTOP: LayoutConfig = {
@@ -49,13 +46,12 @@ const MOBILE: LayoutConfig = {
   showNames: false,
 };
 
-const CHAR_WIDTH = 5.6; // ungefähre Breite eines Zeichens bei 10.5px Schrift
+const CHAR_WIDTH = 5.6;
 
-// "interface" beschreibt hier nur die Form der Daten, wie ein Record in Java
 interface NameLine {
   text: string;
   y: number;
-  textLength: number | null; // gesetzt, wenn die Zeile zu lang ist -> Schrift wird zusammengeschoben
+  textLength: number | null;
 }
 
 interface GraphNode {
@@ -63,9 +59,9 @@ interface GraphNode {
   x: number;
   y: number;
   centerX: number;
-  label: string; // fett gedruckte Zeile im Kasten
+  label: string;
   labelY: number;
-  nameLines: NameLine[]; // auf dem Handy leer
+  nameLines: NameLine[];
   fullLabel: string;
   isCurrent: boolean;
 }
@@ -93,25 +89,21 @@ interface GraphLayout {
 })
 export class ModulePrerequisites implements OnInit {
   private prerequisitesApi = inject(ModulePrerequisitesApi);
-  private modulApi = inject(ModulApi);
+  private moduleApi = inject(ModulApi);
   private router = inject(Router);
   private breakpointObserver = inject(BreakpointObserver);
 
   moduleId = input.required<number>();
   modules = signal<Module[]>([]);
   allPrerequisites = signal<ModuleWithPrerequisites[]>([]);
-  hoveredId = signal<number | null>(null); // "number | null": entweder eine Zahl oder null
-  selectedId = signal<number | null>(null); // Handy: angetipptes Modul
+  hoveredId = signal<number | null>(null);
+  selectedId = signal<number | null>(null);
 
-  // true, solange der Bildschirm schmaler als 600px ist.
-  // observe() liefert bei jeder Änderung ein Ergebnis, map() holt daraus nur das true/false,
-  // toSignal() macht aus dem Observable ein Signal.
   isMobile = toSignal(
     this.breakpointObserver.observe(MOBILE_QUERY).pipe(map((result) => result.matches)),
     { initialValue: this.breakpointObserver.isMatched(MOBILE_QUERY) },
   );
 
-  // Welches Modul gerade hervorgehoben ist: angetippt hat Vorrang vor gehovert
   activeId = computed(() => this.selectedId() ?? this.hoveredId());
 
   predecessorEdges = computed<PrerequisiteEdge[]>(() => {
@@ -130,16 +122,15 @@ export class ModulePrerequisites implements OnInit {
   layout = computed<GraphLayout>(() => this.buildLayout(this.isMobile() ? MOBILE : DESKTOP));
 
   ngOnInit(): void {
-    this.modulApi.getModule().subscribe({
+    this.moduleApi.getModule().subscribe({
       next: (loadedModules) => this.modules.set(loadedModules),
     });
 
-    this.prerequisitesApi.getAllPrerequisitesOfAllModules().subscribe({
+    this.prerequisitesApi.getAllPrerequisites().subscribe({
       next: (loaded) => this.allPrerequisites.set(loaded),
     });
   }
 
-  // Desktop: Klick öffnet direkt. Handy: Tipp zeigt erst den Namen unter der Grafik.
   onNodeClick(id: number): void {
     if (this.isMobile()) {
       this.selectedId.set(this.selectedId() === id ? null : id);
@@ -155,13 +146,11 @@ export class ModulePrerequisites implements OnInit {
     this.router.navigate(['/module', id]);
   }
 
-  // Nur Kanten am hervorgehobenen Modul bleiben kräftig
   isEdgeActive(edge: GraphEdge): boolean {
     const active = this.activeId();
     return active === null || edge.predecessorId === active || edge.successorId === active;
   }
 
-  // Alle Module, die nicht direkt mit dem hervorgehobenen verbunden sind, werden blass
   isNodeDimmed(id: number): boolean {
     const active = this.activeId();
     if (active === null || id === active) return false;
@@ -181,12 +170,6 @@ export class ModulePrerequisites implements OnInit {
     return id === this.moduleId();
   }
 
-  // ---------- Layout ----------
-
-  /**
-   * Semester als Zeilen, Pfeile von oben nach unten.
-   * Gezeigt wird nur der Bereich vom ersten bis zum letzten Semester der Kette.
-   */
   private buildLayout(config: LayoutConfig): GraphLayout {
     const currentId = this.moduleId();
     const idsPerLevel = this.groupByLevel(currentId);
@@ -195,7 +178,6 @@ export class ModulePrerequisites implements OnInit {
     const firstLevel = Math.min(...chainLevels);
     const lastLevel = Math.max(...chainLevels);
 
-    // Kastenbreite so wählen, dass die vollste Zeile die Fläche ausfüllt
     const left = config.padding;
     const areaWidth = config.viewWidth - left - config.padding;
     const maxPerRow = Math.max(...[...idsPerLevel.values()].map((ids) => ids.length));
@@ -208,7 +190,7 @@ export class ModulePrerequisites implements OnInit {
 
     const nodes: GraphNode[] = [];
     for (const [level, ids] of idsPerLevel) {
-      const startX = left + (areaWidth - rowWidth(ids.length)) / 2; // Zeile zentrieren
+      const startX = left + (areaWidth - rowWidth(ids.length)) / 2;
       const y = rowY(level);
       ids.forEach((id, i) => {
         const x = startX + i * (nodeWidth + config.nodeGap);
@@ -227,10 +209,9 @@ export class ModulePrerequisites implements OnInit {
       });
     }
 
-    // Kanten: von der Unterkante des Vorgängers zur Oberkante des Nachfolgers, als S-Kurve
     const nodeById = new Map(nodes.map((n) => [n.id, n]));
     const edges: GraphEdge[] = [...this.predecessorEdges(), ...this.successorEdges()].map((edge) => {
-      const from = nodeById.get(edge.predecessorId)!; // ! = "ist sicher nicht undefined"
+      const from = nodeById.get(edge.predecessorId)!;
       const to = nodeById.get(edge.successorId)!;
       const x1 = from.centerX;
       const y1 = from.y + config.nodeHeight;
@@ -238,9 +219,8 @@ export class ModulePrerequisites implements OnInit {
       const y2 = to.y - 2;
       const bend = (y2 - y1) / 2;
       return {
-        ...edge, // übernimmt predecessorId, successorId, mode
+        ...edge,
         key: edge.predecessorId + '-' + edge.successorId,
-        // `...${}` ist ein Template-String, ähnlich String.format in Java
         path: `M ${x1} ${y1} C ${x1} ${y1 + bend}, ${x2} ${y2 - bend}, ${x2} ${y2}`,
       };
     });
@@ -257,13 +237,12 @@ export class ModulePrerequisites implements OnInit {
     };
   }
 
-  /** Teilt die Module in Semester (bzw. Stufen) auf, innerhalb davon nach Modulnummer sortiert. */
   private groupByLevel(currentId: number) {
     const levels = this.computeLevels(currentId);
 
     const idsPerLevel = new Map<number, number[]>();
     for (const [id, level] of levels) {
-      const ids = idsPerLevel.get(level) ?? []; // ?? = "falls undefined, nimm []"
+      const ids = idsPerLevel.get(level) ?? [];
       ids.push(id);
       idsPerLevel.set(level, ids);
     }
@@ -274,11 +253,6 @@ export class ModulePrerequisites implements OnInit {
     return idsPerLevel;
   }
 
-  /**
-   * Ordnet jeder Modul-id ein Semester (bzw. eine Stufe) zu.
-   * Haben alle beteiligten Module ein recommendedSemester, wird das genommen.
-   * Sonst: aktuelles Modul = 0, Vorgänger davor (negativ), Nachfolger danach.
-   */
   private computeLevels(currentId: number): Map<number, number> {
     const ids = new Set<number>([currentId]);
     for (const edge of [...this.predecessorEdges(), ...this.successorEdges()]) {
@@ -299,12 +273,10 @@ export class ModulePrerequisites implements OnInit {
       return levels;
     }
 
-    // Fallback: Stufen ausrechnen. Ein Vorgänger steht immer mindestens eine Stufe
-    // vor seinem Nachfolger. Wiederholen, bis sich nichts mehr ändert.
     const levels = new Map<number, number>([[currentId, 0]]);
     let changed = true;
     let rounds = 0;
-    while (changed && rounds < 100) { // rounds: Schutz gegen Endlosschleife bei Zyklen in den Daten
+    while (changed && rounds < 100) {
       changed = false;
       rounds++;
 
@@ -331,8 +303,6 @@ export class ModulePrerequisites implements OnInit {
     return levels;
   }
 
-  // ---------- Hilfsmethoden ----------
-
   private findModule(id: number): Module | undefined {
     return this.modules().find((m) => m.id === id);
   }
@@ -347,7 +317,6 @@ export class ModulePrerequisites implements OnInit {
     return module ? module.name : 'Unbekanntes Modul';
   }
 
-  /** Bricht den Namen an Leerzeichen um, höchstens 2 Zeilen, passend zur Kastenbreite. */
   private buildNameLines(name: string, nodeY: number, nodeWidth: number): NameLine[] {
     const textWidth = nodeWidth - 16;
     const maxChars = Math.floor(textWidth / CHAR_WIDTH);
@@ -366,11 +335,10 @@ export class ModulePrerequisites implements OnInit {
     }
     if (line !== '') lines.push(line);
     if (lines.length > 2) {
-      lines.splice(2); // alles ab der 3. Zeile weg
+      lines.splice(2);
       lines[1] += ' …';
     }
 
-    // y-Positionen: eine Zeile mittig unter der Nummer, zwei Zeilen untereinander
     const yPositions = lines.length === 1 ? [nodeY + 38] : [nodeY + 33, nodeY + 46];
     return lines.map((text, i) => ({
       text,

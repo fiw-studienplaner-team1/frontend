@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { ModulePrerequisitesApi } from './module-prerequisites-api';
 
-describe('ModulePrerequisites', () => {
+describe('ModulePrerequisitesApi', () => {
   let service: ModulePrerequisitesApi;
 
   beforeEach(() => {

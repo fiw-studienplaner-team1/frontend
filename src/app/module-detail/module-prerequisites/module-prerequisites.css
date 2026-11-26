@@ -1,9 +1,7 @@
-/* Wird die Card zu schmal, wird horizontal gescrollt statt weiter geschrumpft */
 .graph-scroll {
   overflow-x: auto;
 }
 
-/* Das SVG passt sich der Breite der Card an (Größen aus layout() im TS) */
 .graph {
   display: block;
   width: 100%;
@@ -11,7 +9,6 @@
   margin: 0 auto;
 }
 
-/* Kanten */
 .edge {
   fill: none;
   transition: opacity 0.15s;
@@ -32,7 +29,6 @@
   opacity: 0.1;
 }
 
-/* Knoten */
 .node {
   cursor: pointer;
   outline: none;
@@ -67,7 +63,6 @@
   fill: #4a5568;
 }
 
-/* Das Modul, auf dessen Seite man gerade ist */
 .node.current rect {
   fill: #1f3a5f;
   stroke: #1f3a5f;
@@ -82,12 +77,10 @@
   fill: #ffffff;
 }
 
-/* Handy: nur die Nummer im Kasten, dafür etwas größer */
 .graph.compact .number {
   font-size: 13px;
 }
 
-/* Handy: Name des angetippten Moduls */
 .selection {
   display: flex;
   flex-wrap: wrap;
@@ -121,7 +114,6 @@
   color: #6b7280;
 }
 
-/* Legende */
 .legend {
   display: flex;
   flex-wrap: wrap;

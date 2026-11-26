@@ -5,7 +5,7 @@
 } @else if (status() === 'not-found') {
   <p>Das Modul konnte nicht gefunden werden.</p>
 } @else {
-  @if (modul(); as m) {
+  @if (module(); as m) {
     <div class="module-detail-container">
 
       <header class="module-detail-header">
@@ -14,7 +14,6 @@
         <!-- TODO: Button "Im Modulplaner einplanen" -->
       </header>
 
-      <!-- Kennzahlen: vier kleine Kacheln, auf dem Handy 2×2, ab 600px in einer Reihe -->
       <div class="module-detail-facts">
         <mat-card class="fact">
           <mat-card-content>
@@ -50,7 +49,7 @@
               <mat-card-title>Was du in diesem Modul lernst</mat-card-title>
             </mat-card-header>
             <mat-card-content>
-              <!-- Inhalte und Lernziele: fehlen noch im Modell -->
+              <!-- TODO: Inhalte und Lernziele anzeigen, sobald sie im Modell sind -->
             </mat-card-content>
           </mat-card>
 
@@ -72,13 +71,13 @@
               <mat-card-title>Details</mat-card-title>
             </mat-card-header>
             <mat-card-content>
-              <!-- TODO: variableninhalte ergaenzen -->
+              <!-- TODO: Modulverantwortliche und Prüfungsform anzeigen, sobald sie im Modell sind -->
               <h3>Modulverantwortliche</h3>
               <h3>Prüfungsform</h3>
               <h3>Empfohlen ab Semester </h3>
               <p>{{ m.recommendedSemester }}</p>
               <h3>Modulform</h3>
-              <p>{{ m.moduleForm }}</p>
+              <p>{{ m.moduleForm ? formLabel[m.moduleForm] : 'k. A.' }}</p>
               <h3>Modulnummer</h3>
               <p>{{ m.moduleNumber }}</p>
             </mat-card-content>

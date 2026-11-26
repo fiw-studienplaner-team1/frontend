@@ -22,7 +22,6 @@
         </marker>
       </defs>
 
-      <!-- Kanten zuerst, damit die Kästen darüber liegen -->
       @for (edge of layout().edges; track edge.key) {
         <path
           class="edge"
@@ -71,7 +70,6 @@
     </svg>
   </div>
 
-  <!-- Handy: Name des angetippten Moduls, weil im Kasten nur die Nummer steht -->
   @if (isMobile()) {
     @if (selectedId(); as id) {
       <div class="selection">

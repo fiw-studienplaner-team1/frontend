@@ -1,16 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
-import { firstValueFrom, Observable, of } from 'rxjs';
-import { ModuleWithPrerequisites, Prerequisite, PrerequisiteEdge, PrerequisiteNode } from '../models/prerequisite';
-import { ModulApi } from './modul-api';
-import { E } from '@angular/cdk/keycodes';
+import { Observable, of } from 'rxjs';
+import { ModuleWithPrerequisites, Prerequisite, PrerequisiteEdge } from '../models/prerequisite';
 import { MOCK_MODULES, MOCK_PREREQUISITE_ROWS } from '../mocks/prerequisites.mock';
 
 @Service()
 export class ModulePrerequisitesApi {
   private http = inject(HttpClient);
   private url = 'http://localhost:8080';
-  private modulApi = inject(ModulApi);
 
   getPredecessorsByModuleNumber(moduleNumber: string): Observable<Prerequisite[]> {
     return this.http.get<Prerequisite[]>(`${this.url}/predecessor/${moduleNumber}`);
@@ -19,10 +16,11 @@ export class ModulePrerequisitesApi {
   getSuccessorsByModuleNumber(moduleNumber: string): Observable<Prerequisite[]> {
     return this.http.get<Prerequisite[]>(`${this.url}/successor/${moduleNumber}`);
   }
-
-  // TODO: Mock ersetzen durch return this.http.get<ModuleWithPrerequisites[]>(`${this.url}/prerequisites`);, sobald es den Endpunkt gibt
-  getAllPrerequisitesOfAllModules(): Observable<ModuleWithPrerequisites[]> {
-    const allModules: ModuleWithPrerequisites[] = [];
+  
+  
+  // TODO: Mock durch this.http.get<ModuleWithPrerequisites[]>(`${this.url}/prerequisites`) ersetzen, sobald das Backend GET /prerequisites liefert
+  getAllPrerequisites(): Observable<ModuleWithPrerequisites[]> {
+    const modulesWithPrerequisites: ModuleWithPrerequisites[] = [];
 
     for (const module of MOCK_MODULES) {
       const predecessors: Prerequisite[] = [];
@@ -32,44 +30,44 @@ export class ModulePrerequisitesApi {
         if (row.successor === module.moduleNumber) {
           const predecessorModule = MOCK_MODULES.find((m) => m.moduleNumber === row.predecessor);
           if (predecessorModule) {
-            predecessors.push({ modulPrerequisiteId: predecessorModule.id, mode: row.mode });
+            predecessors.push({ moduleId: predecessorModule.id, mode: row.mode });
           }
         }
 
         if (row.predecessor === module.moduleNumber) {
           const successorModule = MOCK_MODULES.find((m) => m.moduleNumber === row.successor);
           if (successorModule) {
-            successors.push({ modulPrerequisiteId: successorModule.id, mode: row.mode });
+            successors.push({ moduleId: successorModule.id, mode: row.mode });
           }
         }
       }
 
-      allModules.push({ moduleId: module.id, predecessors: predecessors, successors: successors });
+      modulesWithPrerequisites.push({ moduleId: module.id, predecessors: predecessors, successors: successors });
     }
 
-    return of(allModules);
+    return of(modulesWithPrerequisites);
   }
 
-getPredecessorEdges(allModules: ModuleWithPrerequisites[], moduleId: number): PrerequisiteEdge[] {
+  getPredecessorEdges(modulesWithPrerequisites: ModuleWithPrerequisites[], moduleId: number): PrerequisiteEdge[] {
     const prerequisiteEdges: PrerequisiteEdge[] = [];
     const modulesToCheck: number[] = [moduleId];
 
     while (modulesToCheck.length > 0) {
       const currentModuleId = modulesToCheck.shift()!;
-      const currentModule = allModules.find((m) => m.moduleId === currentModuleId);
+      const currentModule = modulesWithPrerequisites.find((m) => m.moduleId === currentModuleId);
 
       if (!currentModule) continue;
 
       for (const predecessor of currentModule.predecessors) {
         const newPredecessorEdge: PrerequisiteEdge = {
-          predecessorId: predecessor.modulPrerequisiteId,
+          predecessorId: predecessor.moduleId,
           successorId: currentModuleId,
           mode: predecessor.mode,
         };
 
         if (!(prerequisiteEdges.some(e => e.predecessorId === newPredecessorEdge.predecessorId && e.successorId === newPredecessorEdge.successorId))) {
           prerequisiteEdges.push(newPredecessorEdge);
-          modulesToCheck.push(predecessor.modulPrerequisiteId);
+          modulesToCheck.push(predecessor.moduleId);
         }
       }
     }
@@ -77,64 +75,30 @@ getPredecessorEdges(allModules: ModuleWithPrerequisites[], moduleId: number): Pr
     return prerequisiteEdges;
   }
 
-  getSuccessorEdges(allModules: ModuleWithPrerequisites[], moduleId: number): PrerequisiteEdge[] {
+  getSuccessorEdges(modulesWithPrerequisites: ModuleWithPrerequisites[], moduleId: number): PrerequisiteEdge[] {
     const prerequisiteEdges: PrerequisiteEdge[] = [];
     const modulesToCheck: number[] = [moduleId];
 
     while (modulesToCheck.length > 0) {
       const currentModuleId = modulesToCheck.shift()!;
-      const currentModule = allModules.find((m) => m.moduleId === currentModuleId);
+      const currentModule = modulesWithPrerequisites.find((m) => m.moduleId === currentModuleId);
 
       if (!currentModule) continue;
 
       for (const successor of currentModule.successors) {
         const newSuccessorEdge: PrerequisiteEdge = {
           predecessorId: currentModuleId,
-          successorId: successor.modulPrerequisiteId,
+          successorId: successor.moduleId,
           mode: successor.mode,
         };
 
         if (!(prerequisiteEdges.some(e => e.predecessorId === newSuccessorEdge.predecessorId && e.successorId === newSuccessorEdge.successorId))) {
           prerequisiteEdges.push(newSuccessorEdge);
-          modulesToCheck.push(successor.modulPrerequisiteId);
+          modulesToCheck.push(successor.moduleId);
         }
       }
     }
 
     return prerequisiteEdges;
-  }
-
-  async getPredecessorTree(moduleNumber: string): Promise<PrerequisiteNode[]> {
-    const predecessorsOfOneModule: Prerequisite[] = await firstValueFrom(this.getPredecessorsByModuleNumber(moduleNumber));
-    const predecessorNodesOfOneModule: PrerequisiteNode[] = [];
-
-    for (const predecessor of predecessorsOfOneModule) {
-      const predecessorModule = await firstValueFrom(this.modulApi.getModuleById(predecessor.modulPrerequisiteId));
-      const children = await this.getPredecessorTree(predecessorModule.moduleNumber);
-      const node: PrerequisiteNode = {
-        modulPrerequisiteId: predecessor.modulPrerequisiteId,
-        mode: predecessor.mode,
-        children: children,
-      };
-      predecessorNodesOfOneModule.push(node);
-    }
-    return predecessorNodesOfOneModule;
-  }
-
-  async getSuccessorTree(moduleNumber: string): Promise<PrerequisiteNode[]> {
-    const successorsOfOneModule: Prerequisite[] = await firstValueFrom(this.getSuccessorsByModuleNumber(moduleNumber));
-    const successorNodesOfOneModule: PrerequisiteNode[] = [];
-
-    for (const successor of successorsOfOneModule) {
-      const successorModule = await firstValueFrom(this.modulApi.getModuleById(successor.modulPrerequisiteId));
-      const children = await this.getSuccessorTree(successorModule.moduleNumber);
-      const node: PrerequisiteNode = {
-        modulPrerequisiteId: successor.modulPrerequisiteId,
-        mode: successor.mode,
-        children: children,
-      };
-      successorNodesOfOneModule.push(node);
-    }
-    return successorNodesOfOneModule;
   }
 }

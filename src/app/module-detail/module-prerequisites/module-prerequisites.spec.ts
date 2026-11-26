@@ -12,6 +12,7 @@ describe('ModulePrerequisites', () => {
 
     fixture = TestBed.createComponent(ModulePrerequisites);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('moduleId', 1);
     await fixture.whenStable();
   });
 

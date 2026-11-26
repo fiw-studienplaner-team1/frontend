@@ -1,8 +1,3 @@
-/*
-  Mobile first: Regeln ohne Media Query gelten fürs Handy.
-  Ab 600px (Tablet) und 900px (Desktop) wird ergänzt.
-*/
-
 .module-detail-container {
   padding: 1rem;
   display: flex;
@@ -18,7 +13,6 @@ mat-card-title {
   font-size: 1.25rem;
 }
 
-/* Kopf: Modulnummer über dem Namen */
 .module-detail-header {
   display: flex;
   flex-direction: column;
@@ -29,7 +23,6 @@ mat-card-title {
   margin: 0;
 }
 
-/* Kennzahlen: 2×2 Kacheln */
 .module-detail-facts {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -52,11 +45,6 @@ mat-card-title {
   font-weight: 500;
 }
 
-/*
-  Inhalt: eine Spalte.
-  minmax(0, 1fr) statt 1fr: Sonst kann die Spalte nicht schmaler werden
-  als ihr breitester Inhalt (z.B. die Grafik), und die ganze Seite wird zu breit.
-*/
 .module-detail-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -70,7 +58,6 @@ mat-card-title {
   min-width: 0;
 }
 
-/* Tablet */
 @media (min-width: 600px) {
   .module-detail-container {
     padding: 2rem;
@@ -89,7 +76,6 @@ mat-card-title {
   }
 }
 
-/* Desktop: Inhalt links breit, Organisation rechts schmal */
 @media (min-width: 900px) {
   .module-detail-container {
     padding: 3rem;
