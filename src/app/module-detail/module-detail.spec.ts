@@ -1,11 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { ActivatedRoute, convertToParamMap } from '@angular/router';
+import { ActivatedRoute, convertToParamMap, ParamMap } from '@angular/router';
+import { BehaviorSubject } from 'rxjs';
 import { ModuleDetail } from './module-detail';
+import { ModulePrerequisites } from './module-prerequisites/module-prerequisites';
 import { Module } from '../models/module';
 
-// URL, die getModuleById für die ID '1' aufruft – mit modul-api abgleichen
 const URL = 'http://localhost:8080/modules/1';
 
 const testModul: Module = {
@@ -23,22 +25,28 @@ const testModul: Module = {
 describe('ModuleDetail', () => {
   let fixture: ComponentFixture<ModuleDetail>;
   let httpMock: HttpTestingController;
+  let paramMap: BehaviorSubject<ParamMap>;
 
   const text = () => (fixture.nativeElement as HTMLElement).textContent ?? '';
 
   beforeEach(() => {
+    paramMap = new BehaviorSubject(convertToParamMap({ id: '1' }));
+
     TestBed.configureTestingModule({
       imports: [ModuleDetail],
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
-        // simuliert die URL /module/1
         {
           provide: ActivatedRoute,
-          useValue: { snapshot: { paramMap: convertToParamMap({ id: '1' }) } },
+          useValue: { paramMap },
         },
       ],
-    });
+    })
+      .overrideComponent(ModuleDetail, {
+        remove: { imports: [ModulePrerequisites] },
+        add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] },
+      });
     fixture = TestBed.createComponent(ModuleDetail);
     httpMock = TestBed.inject(HttpTestingController);
     fixture.detectChanges();
@@ -61,7 +69,7 @@ describe('ModuleDetail', () => {
     fixture.detectChanges();
 
     expect(text()).toContain('Programmierung 1');
-    expect(text()).toContain('6 ECTS');
+    expect(text()).toMatch(/ECTS-Punkte\s*6/);
     expect(text()).toContain('6 SWS');
     expect(text()).toContain('Pflichtmodul');
     expect(text()).toContain('Wintersemester');
@@ -98,5 +106,19 @@ describe('ModuleDetail', () => {
     fixture.detectChanges();
 
     expect(text()).toContain('konnte nicht geladen werden');
+  });
+
+  it('lädt neu, wenn sich die ID in der URL ändert', () => {
+    httpMock.expectOne(URL).flush(testModul);
+    fixture.detectChanges();
+
+    paramMap.next(convertToParamMap({ id: '2' }));
+    httpMock
+      .expectOne('http://localhost:8080/modules/2')
+      .flush({ ...testModul, id: 2, name: 'Programmierung 2', moduleNumber: 'B21' });
+    fixture.detectChanges();
+
+    expect(text()).toContain('Programmierung 2');
+    expect(text()).not.toContain('Programmierung 1');
   });
 });

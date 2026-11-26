@@ -96,6 +96,8 @@ export class ModulePrerequisites implements OnInit {
   moduleId = input.required<number>();
   modules = signal<Module[]>([]);
   allPrerequisites = signal<ModuleWithPrerequisites[]>([]);
+  isLoaded = signal(false);
+  hasLoadError = signal(false);
   hoveredId = signal<number | null>(null);
   selectedId = signal<number | null>(null);
 
@@ -116,7 +118,7 @@ export class ModulePrerequisites implements OnInit {
     return this.prerequisitesApi.getSuccessorEdges(this.allPrerequisites(), this.moduleId());
   });
 
-  isLoading = computed(() => this.allPrerequisites().length === 0);
+  isLoading = computed(() => !this.isLoaded() && !this.hasLoadError());
   hasEdges = computed(() => this.predecessorEdges().length + this.successorEdges().length > 0);
 
   layout = computed<GraphLayout>(() => this.buildLayout(this.isMobile() ? MOBILE : DESKTOP));
@@ -127,7 +129,11 @@ export class ModulePrerequisites implements OnInit {
     });
 
     this.prerequisitesApi.getAllPrerequisites().subscribe({
-      next: (loaded) => this.allPrerequisites.set(loaded),
+      next: (loaded) => {
+        this.allPrerequisites.set(loaded);
+        this.isLoaded.set(true);
+      },
+      error: () => this.hasLoadError.set(true),
     });
   }
 

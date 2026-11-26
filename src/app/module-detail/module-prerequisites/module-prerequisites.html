@@ -1,5 +1,7 @@
 @if (isLoading()) {
   <p>Voraussetzungen werden geladen …</p>
+} @else if (hasLoadError()) {
+  <p>Die Voraussetzungen konnten nicht geladen werden. Bitte versuche es später erneut.</p>
 } @else if (hasEdges()) {
   <div class="graph-scroll">
     <svg
@@ -22,6 +24,7 @@
         </marker>
       </defs>
 
+      <!-- Kanten zuerst, damit die Kästen darüber liegen -->
       @for (edge of layout().edges; track edge.key) {
         <path
           class="edge"
@@ -70,6 +73,7 @@
     </svg>
   </div>
 
+  <!-- Handy: Name des angetippten Moduls, weil im Kasten nur die Nummer steht -->
   @if (isMobile()) {
     @if (selectedId(); as id) {
       <div class="selection">
