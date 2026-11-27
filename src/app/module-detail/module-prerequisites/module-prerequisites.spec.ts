@@ -8,7 +8,7 @@ import { ModulePrerequisites } from './module-prerequisites';
 import { ModulePrerequisitesApi } from '../../services/module-prerequisites-api';
 import { ModulApi } from '../../services/modul-api';
 import { Module } from '../../models/module';
-import { ModuleWithPrerequisites } from '../../models/prerequisite';
+import { PrerequisiteEdge } from '../../models/prerequisite';
 
 function createModule(id: number, moduleNumber: string, name: string, recommendedSemester: number): Module {
   return {
@@ -32,30 +32,11 @@ const MODULES: Module[] = [
   createModule(5, 'B16', 'Fremdsprache 1', 1),
 ];
 
-const ALL_PREREQUISITES: ModuleWithPrerequisites[] = [
-  {
-    moduleId: 1,
-    predecessors: [],
-    successors: [
-      { moduleId: 2, mode: 'RECOMMENDED' },
-      { moduleId: 3, mode: 'NECESSARY' },
-    ],
-  },
-  {
-    moduleId: 2,
-    predecessors: [{ moduleId: 1, mode: 'RECOMMENDED' }],
-    successors: [{ moduleId: 3, mode: 'RECOMMENDED' }],
-  },
-  {
-    moduleId: 3,
-    predecessors: [
-      { moduleId: 1, mode: 'NECESSARY' },
-      { moduleId: 2, mode: 'RECOMMENDED' },
-    ],
-    successors: [{ moduleId: 4, mode: 'NECESSARY' }],
-  },
-  { moduleId: 4, predecessors: [{ moduleId: 3, mode: 'NECESSARY' }], successors: [] },
-  { moduleId: 5, predecessors: [], successors: [] },
+const ALL_PREREQUISITES: PrerequisiteEdge[] = [
+  { id: 1, predecessorModuleId: 1, predecessorModuleNumber: 'B11', successorModuleId: 2, successorModuleNumber: 'B21', prerequisiteMode: 'EMPFOHLEN' },
+  { id: 2, predecessorModuleId: 1, predecessorModuleNumber: 'B11', successorModuleId: 3, successorModuleNumber: 'B34', prerequisiteMode: 'NOTWENDIG' },
+  { id: 3, predecessorModuleId: 2, predecessorModuleNumber: 'B21', successorModuleId: 3, successorModuleNumber: 'B34', prerequisiteMode: 'EMPFOHLEN' },
+  { id: 4, predecessorModuleId: 3, predecessorModuleNumber: 'B34', successorModuleId: 4, successorModuleNumber: 'B56', prerequisiteMode: 'NOTWENDIG' },
 ];
 
 describe('ModulePrerequisites', () => {
@@ -66,7 +47,7 @@ describe('ModulePrerequisites', () => {
 
   async function setUp(
     moduleId: number,
-    options: { mobile?: boolean; prerequisites?: Observable<ModuleWithPrerequisites[]> } = {},
+    options: { mobile?: boolean; prerequisites?: Observable<PrerequisiteEdge[]> } = {},
   ) {
     const mobile = options.mobile ?? false;
     const prerequisites = options.prerequisites ?? of(ALL_PREREQUISITES);

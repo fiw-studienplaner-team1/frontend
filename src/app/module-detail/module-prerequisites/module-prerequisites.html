@@ -24,15 +24,14 @@
         </marker>
       </defs>
 
-      <!-- Kanten zuerst, damit die Kästen darüber liegen -->
       @for (edge of layout().edges; track edge.key) {
         <path
           class="edge"
-          [class.necessary]="edge.mode === 'NECESSARY'"
-          [class.recommended]="edge.mode === 'RECOMMENDED'"
+          [class.necessary]="edge.prerequisiteMode === 'NOTWENDIG'"
+          [class.recommended]="edge.prerequisiteMode === 'EMPFOHLEN'"
           [class.dimmed]="!isEdgeActive(edge)"
           [attr.d]="edge.path"
-          [attr.marker-end]="edge.mode === 'NECESSARY' ? 'url(#arrow-necessary)' : 'url(#arrow-recommended)'"
+          [attr.marker-end]="edge.prerequisiteMode === 'NOTWENDIG' ? 'url(#arrow-necessary)' : 'url(#arrow-recommended)'"
         />
       }
 
@@ -54,7 +53,7 @@
         >
           <title>{{ node.fullLabel }}</title>
           <rect [attr.x]="node.x" [attr.y]="node.y" [attr.width]="layout().nodeWidth" [attr.height]="layout().nodeHeight" rx="6" />
-          <!-- TODO: auf dem Handy Kürzel statt Modulnummer, sobald es im Modell ist (siehe buildLayout) -->
+          <!-- TODO: auf dem Handy Kuerrzel statt Modulnummer, sobald es im Modell ist (siehe buildLayout) -->
           <text class="number" [attr.x]="node.centerX" [attr.y]="node.labelY" text-anchor="middle">
             {{ node.label }}
           </text>

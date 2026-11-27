@@ -1,18 +1,16 @@
-export type PrerequisiteMode = 'NECESSARY' | 'RECOMMENDED';
+export type PrerequisiteMode = 'NOTWENDIG' | 'EMPFOHLEN';
 
 export interface Prerequisite {
   moduleId: number;
-  mode: PrerequisiteMode;
-}
-
-export interface ModuleWithPrerequisites {
-  moduleId: number;
-  predecessors: Prerequisite[];
-  successors: Prerequisite[];
+  moduleNumber: string;
+  prerequisiteMode: PrerequisiteMode;
 }
 
 export interface PrerequisiteEdge {
-  predecessorId: number;
-  successorId: number;
-  mode: PrerequisiteMode;
+  predecessorModuleId: number;
+  successorModuleId: number;
+  prerequisiteMode: PrerequisiteMode;
+  id: number;
+  predecessorModuleNumber: string;
+  successorModuleNumber: string;
 }

@@ -1,4 +1,4 @@
-import { PrerequisiteMode } from '../models/prerequisite';
+import { PrerequisiteEdge } from '../models/prerequisite';
 
 // Mock-Daten aus dem DB-Seed. Die ids entsprechen der Insert-Reihenfolge einer frisch befuellten DB.
 // TODO: Datei entfernen, sobald der Prerequisite-PR gemerged ist und das echte BE genutzt wird
@@ -7,12 +7,6 @@ export interface MockModule {
   id: number;
   moduleNumber: string;
   name: string;
-}
-
-export interface MockPrerequisiteRow {
-  successor: string;
-  predecessor: string;
-  mode: PrerequisiteMode;
 }
 
 export const MOCK_MODULES: MockModule[] = [
@@ -55,36 +49,34 @@ export const MOCK_MODULES: MockModule[] = [
   { id: 37, moduleNumber: 'B66', name: 'Bachelorarbeit' },
 ];
 
-// entspricht der Tabelle module_prerequisites
-export const MOCK_PREREQUISITE_ROWS: MockPrerequisiteRow[] = [
-  { successor: 'B21', predecessor: 'B11', mode: 'RECOMMENDED' },
-  { successor: 'B21', predecessor: 'B13', mode: 'RECOMMENDED' },
-  { successor: 'B22', predecessor: 'B15', mode: 'RECOMMENDED' },
-  { successor: 'B23', predecessor: 'B11', mode: 'RECOMMENDED' },
-  { successor: 'B23', predecessor: 'B13', mode: 'RECOMMENDED' },
-  { successor: 'B24', predecessor: 'B11', mode: 'RECOMMENDED' },
-  { successor: 'B25', predecessor: 'B14', mode: 'RECOMMENDED' },
-  { successor: 'B26', predecessor: 'B16', mode: 'RECOMMENDED' },
-  { successor: 'B31', predecessor: 'B13', mode: 'RECOMMENDED' },
-  { successor: 'B31', predecessor: 'B22', mode: 'RECOMMENDED' },
-  { successor: 'B32', predecessor: 'B23', mode: 'RECOMMENDED' },
-  { successor: 'B33', predecessor: 'B24', mode: 'RECOMMENDED' },
-  { successor: 'B34', predecessor: 'B11', mode: 'NECESSARY' },
-  { successor: 'B34', predecessor: 'B21', mode: 'RECOMMENDED' },
-  { successor: 'B34', predecessor: 'B24', mode: 'RECOMMENDED' },
-  { successor: 'B35', predecessor: 'B23', mode: 'RECOMMENDED' },
-  { successor: 'B51', predecessor: 'B32', mode: 'RECOMMENDED' },
-  { successor: 'B52', predecessor: 'B24', mode: 'RECOMMENDED' },
-  { successor: 'B52', predecessor: 'B31', mode: 'RECOMMENDED' },
-  { successor: 'B53', predecessor: 'B12', mode: 'RECOMMENDED' },
-  { successor: 'B53', predecessor: 'B31', mode: 'RECOMMENDED' },
-  { successor: 'B55', predecessor: 'B42', mode: 'RECOMMENDED' },
-  { successor: 'B56', predecessor: 'B34', mode: 'NECESSARY' },
-  { successor: 'B56', predecessor: 'B21', mode: 'RECOMMENDED' },
-  { successor: 'B61', predecessor: 'B33', mode: 'RECOMMENDED' },
-  { successor: 'B61', predecessor: 'B51', mode: 'RECOMMENDED' },
-  { successor: 'B62', predecessor: 'B14', mode: 'RECOMMENDED' },
-  { successor: 'B62', predecessor: 'B25', mode: 'RECOMMENDED' },
-  { successor: 'B66', predecessor: 'B65.1', mode: 'RECOMMENDED' },
-
+// entspricht der Antwort von GET /prerequisites (ohne B66)
+export const MOCK_PREREQUISITE_EDGES: PrerequisiteEdge[] = [
+  { id: 1,  predecessorModuleId: 1,  predecessorModuleNumber: 'B11', successorModuleId: 7,  successorModuleNumber: 'B21', prerequisiteMode: 'EMPFOHLEN' },
+  { id: 2,  predecessorModuleId: 3,  predecessorModuleNumber: 'B13', successorModuleId: 7,  successorModuleNumber: 'B21', prerequisiteMode: 'EMPFOHLEN' },
+  { id: 3,  predecessorModuleId: 5,  predecessorModuleNumber: 'B15', successorModuleId: 8,  successorModuleNumber: 'B22', prerequisiteMode: 'EMPFOHLEN' },
+  { id: 4,  predecessorModuleId: 1,  predecessorModuleNumber: 'B11', successorModuleId: 9,  successorModuleNumber: 'B23', prerequisiteMode: 'EMPFOHLEN' },
+  { id: 5,  predecessorModuleId: 3,  predecessorModuleNumber: 'B13', successorModuleId: 9,  successorModuleNumber: 'B23', prerequisiteMode: 'EMPFOHLEN' },
+  { id: 6,  predecessorModuleId: 1,  predecessorModuleNumber: 'B11', successorModuleId: 10, successorModuleNumber: 'B24', prerequisiteMode: 'EMPFOHLEN' },
+  { id: 7,  predecessorModuleId: 4,  predecessorModuleNumber: 'B14', successorModuleId: 11, successorModuleNumber: 'B25', prerequisiteMode: 'EMPFOHLEN' },
+  { id: 8,  predecessorModuleId: 6,  predecessorModuleNumber: 'B16', successorModuleId: 12, successorModuleNumber: 'B26', prerequisiteMode: 'EMPFOHLEN' },
+  { id: 9,  predecessorModuleId: 3,  predecessorModuleNumber: 'B13', successorModuleId: 13, successorModuleNumber: 'B31', prerequisiteMode: 'EMPFOHLEN' },
+  { id: 10, predecessorModuleId: 8,  predecessorModuleNumber: 'B22', successorModuleId: 13, successorModuleNumber: 'B31', prerequisiteMode: 'EMPFOHLEN' },
+  { id: 11, predecessorModuleId: 9,  predecessorModuleNumber: 'B23', successorModuleId: 14, successorModuleNumber: 'B32', prerequisiteMode: 'EMPFOHLEN' },
+  { id: 12, predecessorModuleId: 10, predecessorModuleNumber: 'B24', successorModuleId: 15, successorModuleNumber: 'B33', prerequisiteMode: 'EMPFOHLEN' },
+  { id: 13, predecessorModuleId: 1,  predecessorModuleNumber: 'B11', successorModuleId: 16, successorModuleNumber: 'B34', prerequisiteMode: 'NOTWENDIG' },
+  { id: 14, predecessorModuleId: 7,  predecessorModuleNumber: 'B21', successorModuleId: 16, successorModuleNumber: 'B34', prerequisiteMode: 'EMPFOHLEN' },
+  { id: 15, predecessorModuleId: 10, predecessorModuleNumber: 'B24', successorModuleId: 16, successorModuleNumber: 'B34', prerequisiteMode: 'EMPFOHLEN' },
+  { id: 16, predecessorModuleId: 9,  predecessorModuleNumber: 'B23', successorModuleId: 19, successorModuleNumber: 'B35', prerequisiteMode: 'EMPFOHLEN' },
+  { id: 17, predecessorModuleId: 14, predecessorModuleNumber: 'B32', successorModuleId: 25, successorModuleNumber: 'B51', prerequisiteMode: 'EMPFOHLEN' },
+  { id: 18, predecessorModuleId: 10, predecessorModuleNumber: 'B24', successorModuleId: 26, successorModuleNumber: 'B52', prerequisiteMode: 'EMPFOHLEN' },
+  { id: 19, predecessorModuleId: 13, predecessorModuleNumber: 'B31', successorModuleId: 26, successorModuleNumber: 'B52', prerequisiteMode: 'EMPFOHLEN' },
+  { id: 20, predecessorModuleId: 2,  predecessorModuleNumber: 'B12', successorModuleId: 27, successorModuleNumber: 'B53', prerequisiteMode: 'EMPFOHLEN' },
+  { id: 21, predecessorModuleId: 13, predecessorModuleNumber: 'B31', successorModuleId: 27, successorModuleNumber: 'B53', prerequisiteMode: 'EMPFOHLEN' },
+  { id: 22, predecessorModuleId: 23, predecessorModuleNumber: 'B42', successorModuleId: 29, successorModuleNumber: 'B55', prerequisiteMode: 'EMPFOHLEN' },
+  { id: 23, predecessorModuleId: 16, predecessorModuleNumber: 'B34', successorModuleId: 30, successorModuleNumber: 'B56', prerequisiteMode: 'NOTWENDIG' },
+  { id: 24, predecessorModuleId: 7,  predecessorModuleNumber: 'B21', successorModuleId: 30, successorModuleNumber: 'B56', prerequisiteMode: 'EMPFOHLEN' },
+  { id: 25, predecessorModuleId: 15, predecessorModuleNumber: 'B33', successorModuleId: 31, successorModuleNumber: 'B61', prerequisiteMode: 'EMPFOHLEN' },
+  { id: 26, predecessorModuleId: 25, predecessorModuleNumber: 'B51', successorModuleId: 31, successorModuleNumber: 'B61', prerequisiteMode: 'EMPFOHLEN' },
+  { id: 27, predecessorModuleId: 4,  predecessorModuleNumber: 'B14', successorModuleId: 32, successorModuleNumber: 'B62', prerequisiteMode: 'EMPFOHLEN' },
+  { id: 28, predecessorModuleId: 11, predecessorModuleNumber: 'B25', successorModuleId: 32, successorModuleNumber: 'B62', prerequisiteMode: 'EMPFOHLEN' },
 ];
