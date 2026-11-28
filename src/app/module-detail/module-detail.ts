@@ -45,4 +45,12 @@ export class ModuleDetail implements OnInit {
       },
     });
   }
+
+  getWorkloadPerSemester(ects: number): number {
+    return this.moduleApi.getWorkloadPerSemester(ects);
+  }
+
+  getWorkloadPerWeek(ects: number): number {
+    return this.moduleApi.getWorkloadPerWeek(ects);
+  }
 }

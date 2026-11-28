@@ -19,6 +19,7 @@
           <mat-card-content>
             <span class="fact-label">ECTS-Punkte</span>
             <span class="fact-value">{{ m.ects }}</span>
+            <span class="fact-label">entspricht einem Arbeitsaufwand von {{getWorkloadPerSemester(m.ects)}} Stunden pro Semester bzw. {{getWorkloadPerWeek(m.ects)}} Stunden pro Woche</span>
           </mat-card-content>
         </mat-card>
         <mat-card class="fact">
