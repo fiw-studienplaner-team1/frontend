@@ -121,4 +121,14 @@ describe('ModuleDetail', () => {
     expect(text()).toContain('Programmierung 2');
     expect(text()).not.toContain('Programmierung 1');
   });
+
+  it('gibt den Workload pro Semester vom Service weiter', () => {
+    httpMock.expectOne(URL);
+    expect(fixture.componentInstance.getWorkloadPerSemester(5)).toBe(150);
+  });
+
+  it('gibt den Workload pro Woche vom Service weiter', () => {
+    httpMock.expectOne(URL);
+    expect(fixture.componentInstance.getWorkloadPerWeek(5)).toBe(10);
+  });
 });
