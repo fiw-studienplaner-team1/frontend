@@ -1,0 +1,12 @@
+<button mat-button 
+        [matMenuTriggerFor]="semesterMenu" 
+        [disabled]="semesterplans().length === 0">
+    Einplanen
+</button>
+<mat-menu #semesterMenu="matMenu">
+    @for (plan of semesterplans(); track plan.id) {
+    <button mat-menu-item (click)="addModule(module(), plan)">
+        {{ plan.semesterLabel }}
+    </button>
+    }
+</mat-menu>

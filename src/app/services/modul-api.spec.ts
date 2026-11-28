@@ -32,4 +32,17 @@ describe('ModulApi', () => {
 
     expect(ergebnis).toEqual(testDaten);
   });
+
+  it('berechnet den Workload pro Semester aus den ECTS', () => {
+    expect(api.getWorkloadPerSemester(5)).toBe(150);
+  });
+
+  it('berechnet den Workload pro Woche aus den ECTS', () => {
+    expect(api.getWorkloadPerWeek(5)).toBe(10);
+  });
+
+  it('berechnet den Workload auch bei halben ECTS', () => {
+    expect(api.getWorkloadPerSemester(2.5)).toBe(75);
+    expect(api.getWorkloadPerWeek(2.5)).toBe(5);
+  });
 });

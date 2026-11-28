@@ -1,32 +1,47 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { JsonPipe } from '@angular/common';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ModulApi } from '../services/modul-api';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Module, MODULE_TYPE_LABEL, CYCLE_LABEL } from '../models/module';
-
+import { Module, MODULE_TYPE_LABEL, CYCLE_LABEL, MODULE_FORM_LABEL } from '../models/module';
+import { ModulePrerequisites } from './module-prerequisites/module-prerequisites';
+import { MatCard, MatCardHeader, MatCardTitle, MatCardContent, MatCardSubtitle } from '@angular/material/card';
+import { SemesterplanApi } from '../services/semesterplan-api';
+import { Semesterplan } from '../models/semesterplan';
+import { EnrollButton } from '../enroll-button/enroll-button';
+import { MatButtonModule } from '@angular/material/button';
+import { MatChipsModule } from '@angular/material/chips';
 
 @Component({
   selector: 'app-module-detail',
   templateUrl: './module-detail.html',
-  styleUrl: './module-detail.css'
+  styleUrl: './module-detail.css',
+  imports: [ModulePrerequisites, MatCard, MatCardHeader, MatCardTitle, MatCardContent, MatCardSubtitle, EnrollButton, RouterLink, MatButtonModule, MatChipsModule]
 })
 export class ModuleDetail implements OnInit {
   private route = inject(ActivatedRoute);
-  private modulApi = inject(ModulApi);
+  private moduleApi = inject(ModulApi);
+  private api = inject(SemesterplanApi);
 
+  semesterplans = signal<Semesterplan[]>([]);
   status = signal<'loading' | 'error' | 'not-found' | 'ok'>('loading');
-  modul = signal<Module | null>(null);
+  module = signal<Module | null>(null);
 
   readonly typeLabel = MODULE_TYPE_LABEL;
   readonly cycleLabel = CYCLE_LABEL;
+  readonly formLabel = MODULE_FORM_LABEL;
 
   ngOnInit(): void {
-    const id = String(this.route.snapshot.paramMap.get('id'));
+    this.route.paramMap.subscribe((params) => {
+      this.loadModule(Number(params.get('id')));
+    });
+    this.loadPlans();
+  }
 
-    this.modulApi.getModuleById(id).subscribe({
+  private loadModule(id: number): void {
+    this.status.set('loading');
+    this.moduleApi.getModuleById(id).subscribe({
       next: (loadedModule) => {
-        this.modul.set(loadedModule);
+        this.module.set(loadedModule);
         this.status.set('ok');
       },
       error: (err: HttpErrorResponse) => {
@@ -37,5 +52,21 @@ export class ModuleDetail implements OnInit {
         }
       },
     });
+  }
+
+  loadPlans(): void {
+  this.api.getSemesterplan().subscribe ({
+      next: (data) => {
+        this.semesterplans.set(data);
+      },
+    });
+}
+
+  getWorkloadPerSemester(ects: number): number {
+    return this.moduleApi.getWorkloadPerSemester(ects);
+  }
+
+  getWorkloadPerWeek(ects: number): number {
+    return this.moduleApi.getWorkloadPerWeek(ects);
   }
 }

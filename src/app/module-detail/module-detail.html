@@ -1,17 +1,113 @@
-<h1>Moduldetailansicht</h1>
-
 @if (status() === 'loading') {
-<p>Modul wird geladen …</p>
+  <p>Modul wird geladen …</p>
 } @else if (status() === 'error') {
-<p>Das Modul konnte nicht geladen werden. Bitte versuche es später erneut.</p>
+  <p>Das Modul konnte nicht geladen werden. Bitte versuche es später erneut.</p>
 } @else if (status() === 'not-found') {
-<p>Das Modul konnte nicht gefunden werden.</p>
+  <p>Das Modul konnte nicht gefunden werden.</p>
 } @else {
-  @if (modul(); as m) {
-  <h2>{{m.id}} | {{ m.name }}</h2>
-  <p>
-    {{ m.ects }} ECTS | {{ m.weeklyHours }} SWS |
-    {{ m.moduleType ? typeLabel[m.moduleType] : 'k. A.' }} | {{ m.cycle ? cycleLabel[m.cycle] : 'k. A.' }}
-  </p>
+  @if (module(); as m) {
+    <div class="module-detail-container">
+
+      <!-- TODO: Pfad zur Modulliste prüfen -->
+      <nav>
+        <a routerLink="/module">Alle Module</a> / <span>{{ m.name }}</span>
+      </nav>
+
+      <mat-card>
+        <mat-card-content class="module-detail-header">
+          <div>
+            <mat-chip-set>
+              <mat-chip>{{ m.moduleNumber }}</mat-chip>
+              @if (m.moduleType) {
+                <mat-chip>{{ typeLabel[m.moduleType] }}</mat-chip>
+              }
+              <!-- TODO: Status des Moduls (z. B. "Offen") anzeigen -->
+            </mat-chip-set>
+            <h1>{{ m.name }}</h1>
+            <p>
+              Empfohlen ab {{ m.recommendedSemester }}. Semester
+              · {{ m.cycle ? cycleLabel[m.cycle] : 'kein fester Turnus' }}
+            </p>
+          </div>
+
+          <div>
+            <a mat-stroked-button routerLink="/module">Zurück</a>
+            <app-enroll-button [module]="m" [semesterplans]="semesterplans()" />
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <div class="module-detail-facts">
+        <mat-card>
+          <mat-card-header>
+            <mat-card-subtitle>ECTS</mat-card-subtitle>
+            <mat-card-title>{{ m.ects }}</mat-card-title>
+          </mat-card-header>
+        </mat-card>
+        <mat-card>
+          <mat-card-header>
+            <mat-card-subtitle>Arbeitsaufwand</mat-card-subtitle>
+            <mat-card-title>{{ getWorkloadPerSemester(m.ects) }} h</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p>{{ getWorkloadPerWeek(m.ects) }} h pro Woche</p>
+          </mat-card-content>
+        </mat-card>
+        <mat-card>
+          <mat-card-header>
+            <mat-card-subtitle>SWS</mat-card-subtitle>
+            <mat-card-title>{{ m.weeklyHours }}</mat-card-title>
+          </mat-card-header>
+        </mat-card>
+        <mat-card>
+          <mat-card-header>
+            <mat-card-subtitle>Prüfungsform</mat-card-subtitle>
+            <!-- TODO: Prüfungsform anzeigen, sobald sie im Modell ist -->
+            <mat-card-title>k. A.</mat-card-title>
+          </mat-card-header>
+        </mat-card>
+      </div>
+
+      <div class="module-detail-grid">
+        <div class="module-detail-column">
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title>Beschreibung</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <!-- TODO: Beschreibung und Lernziele anzeigen, sobald sie im Modell sind -->
+              <h3>Lernziele</h3>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title>Voraussetzungen</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <!-- TODO: Status und Warnungen zu Voraussetzungen -->
+              <app-module-prerequisites [moduleId]="m.id" />
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <div class="module-detail-column">
+          <mat-card>
+            <mat-card-content>
+              <dl>
+                <dt>Modulnummer</dt>
+                <dd>{{ m.moduleNumber }}</dd>
+                <dt>Modulform</dt>
+                <dd>{{ m.moduleForm ? formLabel[m.moduleForm] : 'k. A.' }}</dd>
+                <dt>Lehrende</dt>
+                <!-- TODO: Modulverantwortliche anzeigen, sobald sie im Modell sind -->
+                <dd></dd>
+              </dl>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+
+    </div>
   }
 }
