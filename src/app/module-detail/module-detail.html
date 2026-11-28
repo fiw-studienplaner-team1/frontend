@@ -8,37 +8,63 @@
   @if (module(); as m) {
     <div class="module-detail-container">
 
-      <header class="module-detail-header">
-        <span class="module-detail-number">{{ m.moduleNumber }}</span>
-        <h1>{{ m.name }}</h1>
-        <!-- TODO: Button "Im Modulplaner einplanen" -->
-      </header>
+      <!-- TODO: Pfad zur Modulliste prüfen -->
+      <nav>
+        <a routerLink="/module">Alle Module</a> / <span>{{ m.name }}</span>
+      </nav>
+
+      <mat-card>
+        <mat-card-content class="module-detail-header">
+          <div>
+            <mat-chip-set>
+              <mat-chip>{{ m.moduleNumber }}</mat-chip>
+              @if (m.moduleType) {
+                <mat-chip>{{ typeLabel[m.moduleType] }}</mat-chip>
+              }
+              <!-- TODO: Status des Moduls (z. B. "Offen") anzeigen -->
+            </mat-chip-set>
+            <h1>{{ m.name }}</h1>
+            <p>
+              Empfohlen ab {{ m.recommendedSemester }}. Semester
+              · {{ m.cycle ? cycleLabel[m.cycle] : 'kein fester Turnus' }}
+            </p>
+          </div>
+
+          <div>
+            <a mat-stroked-button routerLink="/module">Zurück</a>
+            <app-enroll-button [module]="m" [semesterplans]="semesterplans()" />
+          </div>
+        </mat-card-content>
+      </mat-card>
 
       <div class="module-detail-facts">
-        <mat-card class="fact">
+        <mat-card>
+          <mat-card-header>
+            <mat-card-subtitle>ECTS</mat-card-subtitle>
+            <mat-card-title>{{ m.ects }}</mat-card-title>
+          </mat-card-header>
+        </mat-card>
+        <mat-card>
+          <mat-card-header>
+            <mat-card-subtitle>Arbeitsaufwand</mat-card-subtitle>
+            <mat-card-title>{{ getWorkloadPerSemester(m.ects) }} h</mat-card-title>
+          </mat-card-header>
           <mat-card-content>
-            <span class="fact-label">ECTS-Punkte</span>
-            <span class="fact-value">{{ m.ects }}</span>
-            <span class="fact-label">entspricht einem Arbeitsaufwand von {{getWorkloadPerSemester(m.ects)}} Stunden pro Semester bzw. {{getWorkloadPerWeek(m.ects)}} Stunden pro Woche</span>
+            <p>{{ getWorkloadPerWeek(m.ects) }} h pro Woche</p>
           </mat-card-content>
         </mat-card>
-        <mat-card class="fact">
-          <mat-card-content>
-            <span class="fact-label">Wochenstunden</span>
-            <span class="fact-value">{{ m.weeklyHours }} SWS</span>
-          </mat-card-content>
+        <mat-card>
+          <mat-card-header>
+            <mat-card-subtitle>SWS</mat-card-subtitle>
+            <mat-card-title>{{ m.weeklyHours }}</mat-card-title>
+          </mat-card-header>
         </mat-card>
-        <mat-card class="fact">
-          <mat-card-content>
-            <span class="fact-label">Modulart</span>
-            <span class="fact-value">{{ m.moduleType ? typeLabel[m.moduleType] : 'k. A.' }}</span>
-          </mat-card-content>
-        </mat-card>
-        <mat-card class="fact">
-          <mat-card-content>
-            <span class="fact-label">Angeboten</span>
-            <span class="fact-value">{{ m.cycle ? cycleLabel[m.cycle] : 'k. A.' }}</span>
-          </mat-card-content>
+        <mat-card>
+          <mat-card-header>
+            <mat-card-subtitle>Prüfungsform</mat-card-subtitle>
+            <!-- TODO: Prüfungsform anzeigen, sobald sie im Modell ist -->
+            <mat-card-title>k. A.</mat-card-title>
+          </mat-card-header>
         </mat-card>
       </div>
 
@@ -46,20 +72,20 @@
         <div class="module-detail-column">
           <mat-card>
             <mat-card-header>
-              <mat-card-subtitle>Modulinhalte</mat-card-subtitle>
-              <mat-card-title>Was du in diesem Modul lernst</mat-card-title>
+              <mat-card-title>Beschreibung</mat-card-title>
             </mat-card-header>
             <mat-card-content>
-              <!-- TODO: Inhalte und Lernziele anzeigen, sobald sie im Modell sind -->
+              <!-- TODO: Beschreibung und Lernziele anzeigen, sobald sie im Modell sind -->
+              <h3>Lernziele</h3>
             </mat-card-content>
           </mat-card>
 
           <mat-card>
             <mat-card-header>
-              <mat-card-subtitle>Voraussetzungen</mat-card-subtitle>
-              <mat-card-title>Die Abhängigkeiten des Moduls</mat-card-title>
+              <mat-card-title>Voraussetzungen</mat-card-title>
             </mat-card-header>
             <mat-card-content>
+              <!-- TODO: Status und Warnungen zu Voraussetzungen -->
               <app-module-prerequisites [moduleId]="m.id" />
             </mat-card-content>
           </mat-card>
@@ -67,20 +93,16 @@
 
         <div class="module-detail-column">
           <mat-card>
-            <mat-card-header>
-              <mat-card-subtitle>Organisation</mat-card-subtitle>
-              <mat-card-title>Details</mat-card-title>
-            </mat-card-header>
             <mat-card-content>
-              <!-- TODO: Modulverantwortliche und Prüfungsform anzeigen, sobald sie im Modell sind -->
-              <h3>Modulverantwortliche</h3>
-              <h3>Prüfungsform</h3>
-              <h3>Empfohlen ab Semester </h3>
-              <p>{{ m.recommendedSemester }}</p>
-              <h3>Modulform</h3>
-              <p>{{ m.moduleForm ? formLabel[m.moduleForm] : 'k. A.' }}</p>
-              <h3>Modulnummer</h3>
-              <p>{{ m.moduleNumber }}</p>
+              <dl>
+                <dt>Modulnummer</dt>
+                <dd>{{ m.moduleNumber }}</dd>
+                <dt>Modulform</dt>
+                <dd>{{ m.moduleForm ? formLabel[m.moduleForm] : 'k. A.' }}</dd>
+                <dt>Lehrende</dt>
+                <!-- TODO: Modulverantwortliche anzeigen, sobald sie im Modell sind -->
+                <dd></dd>
+              </dl>
             </mat-card-content>
           </mat-card>
         </div>

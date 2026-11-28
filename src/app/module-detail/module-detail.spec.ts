@@ -50,6 +50,7 @@ describe('ModuleDetail', () => {
     fixture = TestBed.createComponent(ModuleDetail);
     httpMock = TestBed.inject(HttpTestingController);
     fixture.detectChanges();
+    httpMock.expectOne('http://localhost:8080/semesterplans').flush([]);
   });
 
   afterEach(() => httpMock.verify());
@@ -64,13 +65,15 @@ describe('ModuleDetail', () => {
     expect(anfrage.request.method).toBe('GET');
   });
 
-  it('zeigt Name, ECTS, SWS, Art und Turnus nach erfolgreichem Laden', () => {
+  it('zeigt Name, ECTS, SWS, Workload, Art und Turnus nach erfolgreichem Laden', () => {
     httpMock.expectOne(URL).flush(testModul);
     fixture.detectChanges();
 
     expect(text()).toContain('Programmierung 1');
-    expect(text()).toMatch(/ECTS-Punkte\s*6/);
-    expect(text()).toContain('6 SWS');
+    expect(text()).toMatch(/ECTS\s*6/);
+    expect(text()).toMatch(/SWS\s*6/);
+    expect(text()).toContain('180 h');
+    expect(text()).toContain('12 h pro Woche');
     expect(text()).toContain('Pflichtmodul');
     expect(text()).toContain('Wintersemester');
     expect(text()).not.toContain('Modul wird geladen');
@@ -80,8 +83,8 @@ describe('ModuleDetail', () => {
     httpMock.expectOne(URL).flush({ ...testModul, moduleType: null, cycle: null });
     fixture.detectChanges();
 
-    const anzahlFallbacks = text().split('k. A.').length - 1;
-    expect(anzahlFallbacks).toBe(2);
+    expect(text()).toContain('kein fester Turnus');
+    expect(text()).not.toContain('Pflichtmodul');
   });
 
   it('zeigt "nicht gefunden", wenn das Backend 404 liefert', () => {
